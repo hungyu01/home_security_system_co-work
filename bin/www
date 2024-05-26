@@ -1,0 +1,130 @@
+#!/usr/bin/env node
+
+/**
+ * Module dependencies.
+ */
+
+var app = require('../app');
+var debug = require('debug')('accounts:server');
+var http = require('http');
+
+// 導入 Mongoose configuration and handle the connection
+var connectDB = require('../db/db');
+// 導入 WebSocket
+const WebSocket = require('ws');
+
+/**
+ * Get port from environment and store in Express.
+ */
+
+var port = normalizePort(process.env.PORT || '4000');
+app.set('port', port);
+
+/**
+ * Create HTTP server.
+ */
+
+var server = http.createServer(app);
+
+/**
+ * Create WebSocket server and bind to the same HTTP server
+ */
+const wss = new WebSocket.Server({ server });
+
+// WebSocket 連線
+wss.on('connection', (ws) => {
+    console.log('Client connected');
+    ws.on('message', (message) => {
+      // 發送消息给所有客户端
+      wss.clients.forEach((client) => {
+        if (client !== ws && client.readyState === WebSocket.OPEN) {
+          client.send(message);
+        }
+      });
+    });
+  
+    ws.on('close', () => {
+      console.log('Client disconnected');
+    });
+  });
+  
+/**
+ * Listen on provided port, on all network interfaces after DB connection.
+ */
+
+// 調用 DB 函數
+function onDBSuccess() {
+    server.listen(port);
+    server.on('error', onError);
+    server.on('listening', onListening);
+    console.log('MongoDB connection successful');
+}
+
+// 回調函式當 DB connection 出現錯誤
+function onDBError(err) {
+    console.error('MongoDB connection error:', err);
+    process.exit(1);
+}
+
+// Connect to the database
+connectDB(onDBSuccess, onDBError);
+
+/**
+ * Normalize a port into a number, string, or false.
+ */
+
+function normalizePort(val) {
+    var port = parseInt(val, 10);
+
+    if (isNaN(port)) {
+        // named pipe
+        return val;
+    }
+
+    if (port >= 0) {
+        // port number
+        return port;
+    }
+
+    return false;
+}
+
+/**
+ * Event listener for HTTP server "error" event.
+ */
+
+function onError(error) {
+    if (error.syscall !== 'listen') {
+        throw error;
+    }
+
+    var bind = typeof port === 'string'
+        ? 'Pipe ' + port
+        : 'Port ' + port;
+
+    // handle specific listen errors with friendly messages
+    switch (error.code) {
+        case 'EACCES':
+            console.error(bind + ' requires elevated privileges');
+            process.exit(1);
+            break;
+        case 'EADDRINUSE':
+            console.error(bind + ' is already in use');
+            process.exit(1);
+            break;
+        default:
+            throw error;
+    }
+}
+
+/**
+ * Event listener for HTTP server "listening" event.
+ */
+
+function onListening() {
+    var addr = server.address();
+    var bind = typeof addr === 'string'
+        ? 'pipe ' + addr
+        : 'port ' + addr.port;
+    debug('Listening on ' + bind);
+}

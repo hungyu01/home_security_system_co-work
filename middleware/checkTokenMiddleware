@@ -1,0 +1,26 @@
+// token 中間件
+module.exports = (req, res, next)=>{
+    // 獲得 token
+    let token = req.get('token');
+    if (!token) {
+        return res.json({
+          code: '2003',
+          msg: 'token 缺失',
+          data: null
+        });
+      }
+    // 校驗 token
+    jwt.verify(token, secret, async (err, data) => {
+            if (err) {
+              return res.json({
+                code: '2004',
+                msg: 'token 核對失敗',
+                data: null
+              });
+            }
+            //保存訊息
+            req.user = data; // 類似 req.session 或是 req.body
+            //校驗成功
+            next();
+    });
+}

@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>家庭智慧監控系統</title>
+    <link rel="stylesheet" href="https://cdn.bootcdn.net/ajax/libs/twitter-bootstrap/3.3.7/css/bootstrap.css">
+    <style>
+        label {
+            font-weight: normal;
+        }
+        .panel-body .glyphicon-remove {
+            display: none;
+        }
+        .panel-body:hover .glyphicon-remove {
+            display: inline-block;
+        }
+        .header-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .header-row h2 {
+            margin: 0;
+        }
+        .btn-primary {
+            margin-top: 20px;
+            font-size: 18px;
+            padding: 15px 30px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="row">
+            <div class="col-xs-12 col-lg-8 col-lg-offset-2">
+                <div class="header-row" style="margin-top: 20px;">
+                    <h2>家庭智慧監控系統</h2>
+                    <form action="/logout" method="post">
+                        <button class="btn btn-danger">登出</button>
+                    </form>
+                </div>
+                <hr>
+                <div class="col-xs-12 text-center">
+                    <button class="btn btn-primary btn-block" onclick="location.href='/homepage/member'">來賓名單</button>
+                </div>
+                <div class="col-xs-12 text-center">
+                    <button class="btn btn-primary btn-block" onclick="location.href='/homepage/gatesecurity'">大門監控系統
+                    </button>
+                </div>
+                <div class="col-xs-12 text-center">
+                    <button class="btn btn-primary btn-block" onclick="location.href='/homepage/indoorsecurity'">室內監控系統
+                    </button>
+                </div>
+                <div class="col-xs-12 text-center">
+                    <button class="btn btn-primary btn-block" onclick="location.href='/homepage/firealarm'">火災警報通知
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+<script>
+    // 獲得所有的 delBtn
+    let delBtns = document.querySelectorAll('.delBtn');
+
+    // 綁定事件
+    delBtns.forEach(item => {
+        item.addEventListener('click', function(e) {
+            if (confirm('確定刪除紀錄嗎？')) {
+                return true;
+            } else {
+                // 阻止預設的行為
+                e.preventDefault();
+            }
+        });
+    });
+</script>
+</html>

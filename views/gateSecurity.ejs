@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>家庭智慧監控系統</title>
+    <link rel="stylesheet" href="https://cdn.bootcdn.net/ajax/libs/twitter-bootstrap/3.3.7/css/bootstrap.css">
+    <style>
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background-color: #f0f0f0;
+            margin: 0;
+        }
+        video {
+            width: 100%;
+            height: auto;
+            background-color: black;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="row">
+            <div class="col-xs-12 col-lg-8 col-lg-offset-2">
+                <h2>大門監控系統</h2>
+                <div class="row text-right">
+                    <div class="col-xs-6 text-left">
+                        <button class="btn btn-primary">
+                            <a href="/homepage" style="color: white; text-decoration: none;">回首頁</a>
+                        </button>
+                    </div>
+                    <div class="col-xs-6 text-right">
+                        <form action="/logout" method="post">
+                            <button class="btn btn-danger">登出</button>
+                        </form>
+                    </div>
+                </div>
+                <hr>
+                <video id="video" controls autoplay></video>
+            </div>
+        </div>
+    </div>
+    <script>
+        const ws = new WebSocket('ws://192.168.137.226:4000');
+        ws.onopen = () => {
+            console.log('Connected to WebSocket server');
+        };
+        ws.onmessage = (event) => {
+            const videoElement = document.getElementById('video');
+            const blob = new Blob([event.data], { type: 'video/mp4' });
+            videoElement.src = URL.createObjectURL(blob);
+        };
+        ws.onclose = () => {
+            console.log('Disconnected from WebSocket server');
+        };
+        ws.onerror = (error) => {
+            console.error('WebSocket error:', error);
+        };
+    </script>
+</body>
+</html>

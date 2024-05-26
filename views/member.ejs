@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>家庭智慧監控系統</title>
+    <link rel="stylesheet" href="https://cdn.bootcdn.net/ajax/libs/twitter-bootstrap/3.3.7/css/bootstrap.css">
+    <style>
+        label {
+            font-weight: normal;
+        }
+        .panel-body .glyphicon-remove {
+            display: none;
+        }
+        .panel-body:hover .glyphicon-remove {
+            display: inline-block;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="row">
+            <div class="col-xs-12 col-lg-8 col-lg-offset-2">
+                <h2>家庭智慧監控系統</h2>
+                <div class="row text-right">
+                    <div class="col-xs-6 text-left">
+                        <button class="btn btn-primary">
+                            <a href="/homepage/member/create" style="color: white; text-decoration: none;">新增來賓名單</a>
+                        </button>
+                        <button class="btn btn-primary">
+                            <a href="/homepage" style="color: white; text-decoration: none;">回首頁</a>
+                        </button>
+                    </div>
+                    <div class="col-xs-6 text-right">
+                        <form action="/logout" method="post">
+                            <button class="btn btn-danger">登出</button>
+                        </form>
+                    </div>
+                </div>
+                <hr>
+                <div class="members">
+                    <% members.forEach(item => { %>
+                    <div class="panel panel-default">
+                        <div class="panel-heading">新增日期：<%= moment(item.time).format('YYYY-MM-DD') %></div>
+                        <div class="panel-body">
+                            <div class="col-xs-6"><%= item.guest %></div>
+                            <div class="col-xs-3 text-center"><%= item.relation %></div>
+                            <div class="col-xs-2 text-right"><%= item.remarks %></div>
+                            <div class="col-xs-1 text-right">
+                                <a class="delBtn" href="/homepage/member/<%= item._id %>">
+                                    <span class="glyphicon glyphicon-remove" aria-hidden="true"></span>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                    <% }) %>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+<script>
+    // 獲得所有的 delBtn
+    let delBtns = document.querySelectorAll('.delBtn');
+
+    // 綁定事件
+    delBtns.forEach(item => {
+        item.addEventListener('click', function(e) {
+            if (confirm('確定刪除紀錄嗎？')) {
+                return true;
+            } else {
+                // 阻止預設的行為
+                e.preventDefault();
+            }
+        });
+    });
+</script>
+</html>
