@@ -10,8 +10,6 @@ var http = require('http');
 
 // 導入 Mongoose configuration and handle the connection
 var connectDB = require('../db/db');
-// 導入 WebSocket
-const WebSocket = require('ws');
 
 /**
  * Get port from environment and store in Express.
@@ -29,25 +27,26 @@ var server = http.createServer(app);
 /**
  * Create WebSocket server and bind to the same HTTP server
  */
-const wss = new WebSocket.Server({ server });
 
 // WebSocket 連線
-wss.on('connection', (ws) => {
-    console.log('Client connected');
-    ws.on('message', (message) => {
-      // 發送消息给所有客户端
-      wss.clients.forEach((client) => {
-        if (client !== ws && client.readyState === WebSocket.OPEN) {
-          client.send(message);
-        }
-      });
+// 在/bin/www或其他適當的位置引入WebSocket庫
+const WebSocket = require('ws');
+
+// 創建WebSocket伺服器並綁定到HTTP伺服器
+const wss = new WebSocket.Server({ server });
+
+wss.on('connection', function connection(ws) {
+  console.log('WebSocket client connected');
+
+    ws.on('message', function incoming(message) {
+        console.log('Received message from client:', message);
     });
-  
+    
     ws.on('close', () => {
-      console.log('Client disconnected');
+        console.log('WebSocket client disconnected');
     });
-  });
-  
+});
+
 /**
  * Listen on provided port, on all network interfaces after DB connection.
  */

@@ -5,6 +5,21 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>家庭智慧監控系統</title>
     <link rel="stylesheet" href="https://cdn.bootcdn.net/ajax/libs/twitter-bootstrap/3.3.7/css/bootstrap.css">
+    <style>
+        #video-container {
+            text-align: center;
+        }
+
+        #video-element {
+            max-width: 64rem;
+            width: 1920px;
+            max-height: 30.875rem;
+            height: 1080px;
+            margin: 1.25rem auto;
+            padding: 1.051%;
+            background-color: #666;
+        }
+    </style>
 </head>
 <body>
     <div class="container">
@@ -26,6 +41,32 @@
                 <hr>
             </div>
         </div>
+        <h1>Live Video Stream</h1>
+        <div class="row">
+            <div id="video-container">
+                <video id="video-element" autoplay controls></video>
+            </div>
+        </div>
     </div>
+    <script>
+        const ws = new WebSocket('ws://127.0.0.1:4000');
+        const videoElement = document.getElementById('video-element');
+
+        ws.onopen = function(event) {
+            console.log('WebSocket connection opened');
+        };
+
+        ws.onmessage = function(event) {
+            videoElement.src = 'data:image/jpeg;base64,' + event.data;
+        };
+
+        ws.onerror = function(event) {
+            console.error('WebSocket error:', event);
+        };
+
+        ws.onclose = function(event) {
+            console.log('WebSocket connection closed');
+        };
+    </script>
 </body>
 </html>

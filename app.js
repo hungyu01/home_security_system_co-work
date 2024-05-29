@@ -11,8 +11,6 @@ const authApiRouter = require('./routes/api/auth')
 //導入 account api 路由文件
 const accountRouter = require('./routes/api/account');
 
-
-
 const app = express();
 
 //設定 session 的中間件
