@@ -4,9 +4,8 @@
  * Module dependencies.
  */
 
-var app = require('../app');
+var { app, server } = require('../app'); // 使用解构赋值来导入 app 和 server 对象
 var debug = require('debug')('accounts:server');
-var http = require('http');
 
 // 導入 Mongoose configuration and handle the connection
 var connectDB = require('../db/db');
@@ -16,77 +15,9 @@ var connectDB = require('../db/db');
  */
 
 var port = normalizePort(process.env.PORT || '4000');
-app.set('port', port);
-
-/**
- * Create HTTP server.
- */
-
-var server = http.createServer(app);
-
-/**
- * Create WebSocket server and bind to the same HTTP server
- */
-
-// WebSocket 連線
-// 在/bin/www或其他適當的位置引入WebSocket庫
-const WebSocket = require('ws');
-
-// 創建WebSocket伺服器並綁定到HTTP伺服器
-const wss = new WebSocket.Server({ server });
-
-wss.on('connection', function connection(ws) {
-  console.log('WebSocket client connected');
-
-    ws.on('message', function incoming(message) {
-        console.log('Received message from client:', message);
-    });
-    
-    ws.on('close', () => {
-        console.log('WebSocket client disconnected');
-    });
-});
-
-/**
- * Listen on provided port, on all network interfaces after DB connection.
- */
-
-// 調用 DB 函數
-function onDBSuccess() {
-    server.listen(port);
-    server.on('error', onError);
-    server.on('listening', onListening);
-    console.log('MongoDB connection successful');
-}
-
-// 回調函式當 DB connection 出現錯誤
-function onDBError(err) {
-    console.error('MongoDB connection error:', err);
-    process.exit(1);
-}
-
-// Connect to the database
-connectDB(onDBSuccess, onDBError);
-
-/**
- * Normalize a port into a number, string, or false.
- */
-
-function normalizePort(val) {
-    var port = parseInt(val, 10);
-
-    if (isNaN(port)) {
-        // named pipe
-        return val;
-    }
-
-    if (port >= 0) {
-        // port number
-        return port;
-    }
-
-    return false;
-}
+server.listen(port); // 直接使用 server 对象的 listen 方法来启动服务器
+server.on('error', onError);
+server.on('listening', onListening);
 
 /**
  * Event listener for HTTP server "error" event.
@@ -126,4 +57,24 @@ function onListening() {
         ? 'pipe ' + addr
         : 'port ' + addr.port;
     debug('Listening on ' + bind);
+}
+
+/**
+ * Normalize a port into a number, string, or false.
+ */
+
+function normalizePort(val) {
+    var port = parseInt(val, 10);
+
+    if (isNaN(port)) {
+        // named pipe
+        return val;
+    }
+
+    if (port >= 0) {
+        // port number
+        return port;
+    }
+
+    return false;
 }
