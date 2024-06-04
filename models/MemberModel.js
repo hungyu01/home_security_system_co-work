@@ -1,6 +1,6 @@
 const mongoose = require('mongoose');
 
-// 定義書籍 schema
+// 定義 schema
 const MemberSchema = new mongoose.Schema({
     guest:{type:String, required: true},
     time: Date,

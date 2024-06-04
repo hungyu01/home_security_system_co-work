@@ -1,6 +1,6 @@
 const mongoose = require('mongoose');
 
-// 定義書籍 schema
+// 定義 schema
 const UserSchema = new mongoose.Schema({
     username: String,
     password: String
