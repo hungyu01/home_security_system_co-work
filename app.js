@@ -12,7 +12,8 @@ const authApiRouter = require('./routes/api/auth');
 const accountRouter = require('./routes/api/account');
 //導入 Socket.IO
 const http = require('http');
-const WebSocket = require('ws');
+const { Server } = require('socket.io');
+
 
 const app = express();
 
@@ -49,25 +50,23 @@ app.use('/api', authApiRouter);
 // 創建 HTTP 伺服器
 const server = http.createServer(app);
 
-// 創建 WebSocket 伺服器
-const wss = new WebSocket.Server({ server });
+// 創建 Socket 伺服器
+const io = new Server(server);
 
-// WebSocket 處理
-wss.on('connection', (ws) => {
-    console.log('WebSocket client connected');
-
-    ws.on('message', (message) => {
-        // console.log('received: %s', message);
-        // 廣播消息
-        wss.clients.forEach(client => {
-            if (client.readyState === WebSocket.OPEN) {
-                client.send(message);
-            }
-        });
+// Socket 處理
+io.on('connection', (socket) => {
+    console.log('Socket client connected');
+    socket.on('stream', (data) => {
+        try {
+            // 進行處理或傳遞數據
+            io.emit('stream', data);
+        } finally {
+            // 顯式釋放變量
+            data = null;
+        }
     });
-
-    ws.on('close', () => {
-        console.log('WebSocket client disconnected');
+    socket.on('disconnect', () => {
+        console.log('Socket client disconnected');
     });
 });
 

@@ -1,5 +1,6 @@
 const express = require('express');
 const router = express.Router();
+const { spawn } = require('child_process');
 //導入 moment
 const moment = require('moment');
 
@@ -44,6 +45,23 @@ router.get('/homepage/indoorsecurity', checkLoginMiddleware, function(req, res, 
 
 //新增室內動作監控頁面
 router.get('/homepage/firealarm', checkLoginMiddleware, function(req, res, next) {
+      // 執行 Python 腳本
+      const pythonProcess = spawn('python', ['models/FireModel.py']);
+    
+      // 監聽輸出事件（如果需要）
+      pythonProcess.stdout.on('data', (data) => {
+          console.log(`Python 輸出： ${data}`);
+      });
+  
+      // 監聽錯誤事件（如果需要）
+      pythonProcess.stderr.on('data', (data) => {
+          console.error(`Python 錯誤： ${data}`);
+      });
+  
+      // 監聽結束事件（如果需要）
+      pythonProcess.on('close', (code) => {
+          console.log(`Python 子進程結束，退出碼 ${code}`);
+      });
   res.render('fireAlarm');
 });
 

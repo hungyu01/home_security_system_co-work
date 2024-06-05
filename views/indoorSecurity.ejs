@@ -42,24 +42,12 @@
     </div>
 
     <script>
-      const ws = new WebSocket('ws://localhost:4000'); // 使用 WebSocket 連接服務器
-  
-      ws.onopen = function(event) {
-        console.log('WebSocket connection established');
-      };
-  
-      ws.onmessage = function(event) {
+      const socket = io();
+      socket.on('stream', (data) => {
         const img = document.getElementById('video');
-        img.src = 'data:image/jpeg;base64,' + event.data;
-      };
-  
-      ws.onclose = function(event) {
-        console.log('WebSocket connection closed');
-      };
-  
-      ws.onerror = function(event) {
-        console.error('WebSocket error:', event);
-      };
+        img.src = 'data:image/jpeg;base64,' + data;
+        
+      });
     </script>
 </body>
 </html>
