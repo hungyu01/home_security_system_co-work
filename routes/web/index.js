@@ -35,11 +35,45 @@ router.get('/homepage/member/create', checkLoginMiddleware, function(req, res, n
 
 //新增大門人臉偵測頁面
 router.get('/homepage/gatesecurity', checkLoginMiddleware, function(req, res, next) {
+        // 執行 Python 腳本
+        const pythonProcess = spawn('python', ['models/CamModel.py']);
+    
+        // 監聽輸出事件（如果需要）
+        pythonProcess.stdout.on('data', (data) => {
+            console.log(`Python 輸出： ${data}`);
+        });
+    
+        // 監聽錯誤事件（如果需要）
+        pythonProcess.stderr.on('data', (data) => {
+            console.error(`Python 錯誤： ${data}`);
+        });
+    
+        // 監聽結束事件（如果需要）
+        pythonProcess.on('close', (code) => {
+            console.log(`Python 子進程結束，退出碼 ${code}`);
+        });
   res.render('gateSecurity');
 });
 
 //新增室內動作監控頁面
 router.get('/homepage/indoorsecurity', checkLoginMiddleware, function(req, res, next) {
+        // // 執行 Python 腳本
+        // const pythonProcess = spawn('python', ['models/Fall_Detection/YOLOv8_fall.py']);
+    
+        // // 監聽輸出事件（如果需要）
+        // pythonProcess.stdout.on('data', (data) => {
+        //     console.log(`Python 輸出： ${data}`);
+        // });
+    
+        // // 監聽錯誤事件（如果需要）
+        // pythonProcess.stderr.on('data', (data) => {
+        //     console.error(`Python 錯誤： ${data}`);
+        // });
+    
+        // // 監聽結束事件（如果需要）
+        // pythonProcess.on('close', (code) => {
+        //     console.log(`Python 子進程結束，退出碼 ${code}`);
+        // });
   res.render('indoorSecurity');
 });
 

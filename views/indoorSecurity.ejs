@@ -35,7 +35,7 @@
                 </div>
                 <hr>
                 <div id="video-container">
-                  <img id="video" alt="Live Stream">
+                  <img id="videoFall" alt="Live Stream">
                 </div>
             </div>
         </div>
@@ -43,8 +43,8 @@
 
     <script>
       const socket = io();
-      socket.on('stream', (data) => {
-        const img = document.getElementById('video');
+      socket.on('streamFall', (data) => {
+        const img = document.getElementById('videoFall');
         img.src = 'data:image/jpeg;base64,' + data;
         
       });

@@ -53,22 +53,31 @@ const server = http.createServer(app);
 // 創建 Socket 伺服器
 const io = new Server(server);
 
-// Socket 處理
+// Socket.IO 事件處理
 io.on('connection', (socket) => {
     console.log('Socket client connected');
-    socket.on('stream', (data) => {
-        try {
-            // 進行處理或傳遞數據
-            io.emit('stream', data);
-        } finally {
-            // 顯式釋放變量
-            data = null;
-        }
-    });
+
+    socket.on('streamFace', (data) => handleStreamEvent('streamFace', data, socket));
+    socket.on('streamFall', (data) => handleStreamEvent('streamFall', data, socket));
+    socket.on('streamFire', (data) => handleStreamEvent('streamFire', data, socket));
+
     socket.on('disconnect', () => {
         console.log('Socket client disconnected');
     });
 });
+
+// 處理 stream 事件的通用函數
+function handleStreamEvent(eventType, data, socket) {
+    try {
+        // 處理數據或傳遞數據
+        socket.broadcast.emit(eventType, data);
+    } catch (error) {
+        console.error(`Error handling ${eventType} event:`, error);
+    } finally {
+        // 顯式釋放變量
+        data = null;
+    }
+}
 
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {
