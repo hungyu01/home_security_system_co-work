@@ -8,6 +8,10 @@ const moment = require('moment');
 let checkLoginMiddleware = require('../../middleware/checkLoginMiddleware');
 const MemberModel = require('../../models/MemberModel');
 
+let faceRecognitionProcess = null;
+let fallDetectionProcess = null;
+let fireAlarmProcess = null;
+
 // 系統首頁
 router.get('/', checkLoginMiddleware, function(req, res, next) {
   res.redirect('/homepage');
@@ -34,9 +38,9 @@ router.get('/homepage/member/create', checkLoginMiddleware, function(req, res, n
 });
 
 //新增大門人臉偵測頁面
-router.get('/homepage/gatesecurity', checkLoginMiddleware, function(req, res, next) {
+router.get('/homepage/faceRecognition', checkLoginMiddleware, function(req, res, next) {
         // 執行 Python 腳本
-        const pythonProcess = spawn('python', ['models/CamModel.py']);
+        const pythonProcess = spawn('python', ['models/Face_Recognition/Face_Recognition.py']);
     
         // 監聽輸出事件（如果需要）
         pythonProcess.stdout.on('data', (data) => {
@@ -52,35 +56,35 @@ router.get('/homepage/gatesecurity', checkLoginMiddleware, function(req, res, ne
         pythonProcess.on('close', (code) => {
             console.log(`Python 子進程結束，退出碼 ${code}`);
         });
-  res.render('gateSecurity');
+  res.render('faceRecognition');
 });
 
 //新增室內動作監控頁面
-router.get('/homepage/indoorsecurity', checkLoginMiddleware, function(req, res, next) {
-        // // 執行 Python 腳本
-        // const pythonProcess = spawn('python', ['models/Fall_Detection/YOLOv8_fall.py']);
+router.get('/homepage/fallDetection', checkLoginMiddleware, function(req, res, next) {
+        // 執行 Python 腳本
+        const pythonProcess = spawn('python', ['models/Fall_Detection/YOLOv8_fall.py']);
     
-        // // 監聽輸出事件（如果需要）
-        // pythonProcess.stdout.on('data', (data) => {
-        //     console.log(`Python 輸出： ${data}`);
-        // });
+        // 監聽輸出事件（如果需要）
+        pythonProcess.stdout.on('data', (data) => {
+            console.log(`Python 輸出： ${data}`);
+        });
     
-        // // 監聽錯誤事件（如果需要）
-        // pythonProcess.stderr.on('data', (data) => {
-        //     console.error(`Python 錯誤： ${data}`);
-        // });
+        // 監聽錯誤事件（如果需要）
+        pythonProcess.stderr.on('data', (data) => {
+            console.error(`Python 錯誤： ${data}`);
+        });
     
-        // // 監聽結束事件（如果需要）
-        // pythonProcess.on('close', (code) => {
-        //     console.log(`Python 子進程結束，退出碼 ${code}`);
-        // });
-  res.render('indoorSecurity');
+        // 監聽結束事件（如果需要）
+        pythonProcess.on('close', (code) => {
+            console.log(`Python 子進程結束，退出碼 ${code}`);
+        });
+  res.render('fallDetection');
 });
 
-//新增室內動作監控頁面
-router.get('/homepage/firealarm', checkLoginMiddleware, function(req, res, next) {
+//新增火災警報通知頁面
+router.get('/homepage/fireAlarm', checkLoginMiddleware, function(req, res, next) {
       // 執行 Python 腳本
-      const pythonProcess = spawn('python', ['models/FireModel.py']);
+      const pythonProcess = spawn('python', ['models/Fire_Alarm/fire.py']);
     
       // 監聽輸出事件（如果需要）
       pythonProcess.stdout.on('data', (data) => {
@@ -130,6 +134,23 @@ router.get('/homepage/member/:id', checkLoginMiddleware, async (req, res) => {
   } catch (error) {
     res.status(500).send('刪除失敗');
   }
+});
+
+// 新增關閉子進程的路由
+router.post('/homepage/close-python', function(req, res) {
+  if (faceRecognitionProcess) {
+    faceRecognitionProcess.kill();
+    faceRecognitionProcess = null;
+  }
+  if (fallDetectionProcess) {
+    fallDetectionProcess.kill();
+    fallDetectionProcess = null;
+  }
+  if (fireAlarmProcess) {
+    fireAlarmProcess.kill();
+    fireAlarmProcess = null;
+  }
+  res.send({ message: '子進程已關閉' });
 });
 
 module.exports = router;

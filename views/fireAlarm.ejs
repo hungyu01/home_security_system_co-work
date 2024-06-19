@@ -10,7 +10,7 @@
     <div class="container">
         <div class="row">
             <div class="col-xs-12 col-lg-8 col-lg-offset-2">
-                <h2>火災警報通知</h2>
+                <h2>火災警報通知系統</h2>
                 <div class="row text-right">
                     <div class="col-xs-6 text-left">
                         <button class="btn btn-primary">
@@ -24,11 +24,22 @@
                     </div>
                 </div>
                 <hr>
+                <div id="video-container">
+                    <img id="videoFire" alt="Live Stream">
+                </div>
             </div>
         </div>
     </div>
 <script>
+      const socket = io();
+      socket.on('streamFire', (data) => {
+        const img = document.getElementById('videoFire');
+        img.src = 'data:image/jpeg;base64,' + data;
+      });
 
+      window.addEventListener('beforeunload', function() {
+        navigator.sendBeacon('/homepage/close-python');
+      });
 </script>
 </body>
 </html>

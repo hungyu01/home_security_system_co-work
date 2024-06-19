@@ -7,7 +7,7 @@ import base64
 sio = socketio.Client()
 
 # 連接到伺服器
-sio.connect('http://192.168.24.51:4000')  # 記得替換 ip 和 port
+sio.connect('http://192.168.24.51:4000')  # 記得確認 ip 和 port
 
 # 初始化攝影機
 cap = cv2.VideoCapture(0)
