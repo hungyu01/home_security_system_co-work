@@ -1,15 +1,27 @@
 import cv2
 import socketio
 import base64
+
 recognizer = cv2.face.LBPHFaceRecognizer_create()         # 啟用訓練人臉模型方法
 recognizer.read('./models/Face_Recognition/face.yml')                               # 讀取人臉模型檔
 cascade_path = "./models/Face_Recognition/xml/haarcascade_frontalface_default.xml"  # 載入人臉追蹤模型
 face_cascade = cv2.CascadeClassifier(cascade_path)        # 啟用人臉追蹤
-# img = cv2.imread('chris_evans29.png')
 cap = cv2.VideoCapture(0)                                 # 開啟攝影機
 
 # 初始化 Socket.IO 連接
 sio = socketio.Client()
+
+# 控制主循環運行的標誌
+running = True
+
+# 定義斷開連接的處理函數
+def disconnect_handler():
+    global running
+    print("與伺服器斷開連接。停止應用程序。")
+    running = False
+
+# 註冊斷開連接事件的處理函數
+sio.on('disconnect', disconnect_handler)
 
 # 連接到伺服器
 sio.connect('http://192.168.24.51:4000')  # 記得替換 ip 和 port
@@ -49,9 +61,9 @@ while True:
         # 發送影像幀到伺服器
         sio.emit('streamFace', jpg_as_text)
 
-    # cv2.imshow('camera', img)
-    # if cv2.waitKey(5) == ord('e'):
-    #     break    # 按下 q 鍵停止
+if not sio.connected:
+    exit()
+
 cap.release()
 cv2.destroyAllWindows()
-cv2.waitKey(1)
+sio.disconnect()

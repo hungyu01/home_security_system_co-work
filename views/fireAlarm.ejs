@@ -1,16 +1,26 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>家庭智慧監控系統</title>
-    <link rel="stylesheet" href="https://cdn.bootcdn.net/ajax/libs/twitter-bootstrap/3.3.7/css/bootstrap.css">
+  <title>家庭智慧監控系統</title>
+  <link rel="stylesheet" href="https://cdn.bootcdn.net/ajax/libs/twitter-bootstrap/3.3.7/css/bootstrap.css">
+  <script src="/socket.io/socket.io.js"></script>
+  <style>
+    #video-container {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+    #video {
+      max-width: 100%;
+      max-height: 100%;
+    }
+  </style>
 </head>
 <body>
     <div class="container">
         <div class="row">
             <div class="col-xs-12 col-lg-8 col-lg-offset-2">
-                <h2>火災警報通知系統</h2>
+                <h2>火焰偵測通知系統</h2>
                 <div class="row text-right">
                     <div class="col-xs-6 text-left">
                         <button class="btn btn-primary">
@@ -25,21 +35,19 @@
                 </div>
                 <hr>
                 <div id="video-container">
-                    <img id="videoFire" alt="Live Stream">
+                  <img id="videoFire" alt="Live Stream">
                 </div>
             </div>
         </div>
     </div>
-<script>
+
+    <script>
       const socket = io();
       socket.on('streamFire', (data) => {
         const img = document.getElementById('videoFire');
         img.src = 'data:image/jpeg;base64,' + data;
+        
       });
-
-      window.addEventListener('beforeunload', function() {
-        navigator.sendBeacon('/homepage/close-python');
-      });
-</script>
+    </script>
 </body>
 </html>

@@ -63,6 +63,7 @@ io.on('connection', (socket) => {
 
     socket.on('disconnect', () => {
         console.log('Socket client disconnected');
+        io.emit('dis')
     });
 });
 

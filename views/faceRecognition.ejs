@@ -48,10 +48,6 @@
         img.src = 'data:image/jpeg;base64,' + data;
         
       });
-
-      window.addEventListener('beforeunload', function() {
-        navigator.sendBeacon('/homepage/close-python');
-      });
     </script>
 </body>
 </html>
