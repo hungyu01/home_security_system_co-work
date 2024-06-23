@@ -10,9 +10,17 @@
       justify-content: center;
       align-items: center;
     }
-    #video {
+    #videoFall {
       max-width: 100%;
       max-height: 100%;
+    }
+    #loading {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+    #loading img {
+      max-width: 100px; /* Adjust as needed */
     }
   </style>
 </head>
@@ -35,7 +43,10 @@
                 </div>
                 <hr>
                 <div id="video-container">
-                  <img id="videoFall" alt="Live Stream">
+                  <div id="loading">
+                    <img src="/public/picture/loading.gif" alt="Loading...">
+                  </div>
+                  <img id="videoFall" alt="Live Stream" style="display:none;">
                 </div>
             </div>
         </div>
@@ -43,10 +54,17 @@
 
     <script>
       const socket = io();
+      const img = document.getElementById('videoFall');
+      const loading = document.getElementById('loading');
+
       socket.on('streamFall', (data) => {
-        const img = document.getElementById('videoFall');
         img.src = 'data:image/jpeg;base64,' + data;
-        
+        img.style.display = 'block';  // Show the video image
+        loading.style.display = 'none';  // Hide the loading gif
+      });
+
+      window.addEventListener('beforeunload', function() {
+        navigator.sendBeacon('/homepage/stopFallDetection');
       });
     </script>
 </body>

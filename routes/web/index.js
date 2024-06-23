@@ -7,6 +7,8 @@ const moment = require('moment');
 //宣告登入檢測的 middleware
 let checkLoginMiddleware = require('../../middleware/checkLoginMiddleware');
 const MemberModel = require('../../models/MemberModel');
+const { kill } = require('process');
+const treeKill = require('tree-kill');
 
 let faceRecognitionProcess = null;
 let fallDetectionProcess = null;
@@ -40,67 +42,100 @@ router.get('/homepage/member/create', checkLoginMiddleware, function(req, res, n
 //新增大門人臉偵測頁面
 router.get('/homepage/faceRecognition', checkLoginMiddleware, function(req, res, next) {
         // 執行 Python 腳本
-        const pythonProcess = spawn('python', ['models/Face_Recognition/Face_Recognition.py']);
+        faceRecognitionProcess = spawn('python', ['models/Face_Recognition/Face_Recognition.py']);
     
         // 監聽輸出事件（如果需要）
-        pythonProcess.stdout.on('data', (data) => {
+        faceRecognitionProcess.stdout.on('data', (data) => {
             console.log(`Python 輸出： ${data}`);
         });
     
         // 監聽錯誤事件（如果需要）
-        pythonProcess.stderr.on('data', (data) => {
+        faceRecognitionProcess.stderr.on('data', (data) => {
             console.error(`Python 錯誤： ${data}`);
         });
     
         // 監聽結束事件（如果需要）
-        pythonProcess.on('close', (code) => {
+        faceRecognitionProcess.on('close', (code) => {
             console.log(`Python 子進程結束，退出碼 ${code}`);
         });
   res.render('faceRecognition');
 });
 
+// 停止人臉偵測的 Python 腳本
+router.post('/homepage/stopFaceRecognition', (req, res) => {
+  if (faceRecognitionProcess) {
+    treeKill(faceRecognitionProcess.pid, 'SIGTERM');
+    faceRecognitionProcess = null;
+    res.send('Face recognition stopped');
+  } else {
+    res.send('No face recognition process to stop');
+  }
+});
+
 //新增室內動作監控頁面
 router.get('/homepage/fallDetection', checkLoginMiddleware, function(req, res, next) {
         // 執行 Python 腳本
-        const pythonProcess = spawn('python', ['models/Fall_Detection/YOLOv8_fall.py']);
+        fallDetectionProcess = spawn('python', ['models/Fall_Detection/YOLOv8_fall.py']);
     
         // 監聽輸出事件（如果需要）
-        pythonProcess.stdout.on('data', (data) => {
+        fallDetectionProcess.stdout.on('data', (data) => {
             console.log(`Python 輸出： ${data}`);
         });
     
         // 監聽錯誤事件（如果需要）
-        pythonProcess.stderr.on('data', (data) => {
+        fallDetectionProcess.stderr.on('data', (data) => {
             console.error(`Python 錯誤： ${data}`);
         });
     
         // 監聽結束事件（如果需要）
-        pythonProcess.on('close', (code) => {
+        fallDetectionProcess.on('close', (code) => {
             console.log(`Python 子進程結束，退出碼 ${code}`);
         });
   res.render('fallDetection');
 });
 
+// 停止動作監控的 Python 腳本
+router.post('/homepage/stopFallDetection', (req, res) => {
+  if (fallDetectionProcess) {
+    treeKill(fallDetectionProcess.pid, 'SIGTERM');
+    fallDetectionProcess = null;
+    res.send('Fall detection stopped');
+  } else {
+    res.send('No fall detection process to stop');
+  }
+});
+
 //新增火災警報通知頁面
 router.get('/homepage/fireAlarm', checkLoginMiddleware, function(req, res, next) {
       // 執行 Python 腳本
-      const pythonProcess = spawn('python', ['models/Fire_Alarm/fire.py']);
+      fireAlarmProcess = spawn('python', ['models/Fire_Alarm/fire.py']);
     
       // 監聽輸出事件（如果需要）
-      pythonProcess.stdout.on('data', (data) => {
+      fireAlarmProcess.stdout.on('data', (data) => {
           console.log(`Python 輸出： ${data}`);
       });
   
       // 監聽錯誤事件（如果需要）
-      pythonProcess.stderr.on('data', (data) => {
+      fireAlarmProcess.stderr.on('data', (data) => {
           console.error(`Python 錯誤： ${data}`);
       });
   
       // 監聽結束事件（如果需要）
-      pythonProcess.on('close', (code) => {
+      fireAlarmProcess.on('close', (code) => {
           console.log(`Python 子進程結束，退出碼 ${code}`);
       });
   res.render('fireAlarm');
+});
+
+// 停止火災警報的 Python 腳本
+router.post('/homepage/stopFireAlarm', (req, res) => {
+  if (fireAlarmProcess) {
+    treeKill(fireAlarmProcess.pid, 'SIGTERM');
+    fireAlarmProcess = null;
+    res.send('Fire alarm stopped');
+  } else {
+    res.send('No fire alarm process to stop');
+  }
 });
 
 // 新增紀錄
@@ -134,23 +169,6 @@ router.get('/homepage/member/:id', checkLoginMiddleware, async (req, res) => {
   } catch (error) {
     res.status(500).send('刪除失敗');
   }
-});
-
-// 新增關閉子進程的路由
-router.post('/homepage/close-python', function(req, res) {
-  if (faceRecognitionProcess) {
-    faceRecognitionProcess.kill();
-    faceRecognitionProcess = null;
-  }
-  if (fallDetectionProcess) {
-    fallDetectionProcess.kill();
-    fallDetectionProcess = null;
-  }
-  if (fireAlarmProcess) {
-    fireAlarmProcess.kill();
-    fireAlarmProcess = null;
-  }
-  res.send({ message: '子進程已關閉' });
 });
 
 module.exports = router;

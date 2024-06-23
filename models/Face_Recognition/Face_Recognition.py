@@ -24,7 +24,7 @@ def disconnect_handler():
 sio.on('disconnect', disconnect_handler)
 
 # 連接到伺服器
-sio.connect('http://192.168.24.51:4000')  # 記得替換 ip 和 port
+sio.connect('http://192.168.88.45:4000')  # 記得替換 ip 和 port
 
 if not cap.isOpened():
     print("Cannot open camera")
@@ -60,9 +60,6 @@ while True:
 
         # 發送影像幀到伺服器
         sio.emit('streamFace', jpg_as_text)
-
-if not sio.connected:
-    exit()
 
 cap.release()
 cv2.destroyAllWindows()
