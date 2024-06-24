@@ -39,7 +39,7 @@ sio.on('disconnect', disconnect_handler)
 sio.connect('http://192.168.24.51:4000')  # 確認 IP 和 port
 
 # 啟動攝像頭
-cap = cv2.VideoCapture(0)
+cap = cv2.VideoCapture('./public/video/Fire_0.mp4')
 if not cap.isOpened():
     print("無法打開攝像頭")
     exit()
@@ -94,10 +94,15 @@ try:
         # 設置每一幀之間的延遲
         time.sleep(0.1)
 
-        if fire_count > 10:
+        if fire_count == 10:
             print("Fire detected in more than 10 frames! Triggering alarm.")
+
+            # 抓取當前偵測事件的截圖
+            screenshot_path = './public/picture/fire_event/fire_screenshot.jpg'
+            cv2.imwrite(screenshot_path, frame)
+
             # Here you can add code to trigger an alarm (e.g., play a sound, send a notification)
-            fire_count = 0  # Reset fire_count after triggering the alarm
+            # fire_count = 0  # Reset fire_count after triggering the alarm
             send_mail()
 
 finally:

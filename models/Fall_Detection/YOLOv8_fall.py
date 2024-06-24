@@ -43,7 +43,7 @@ runs_folder_path = './runs'                               # 輸出的資料夾�
 results_path = runs_folder_path + '/detect/predict/image0.jpg'                     # 這一行路徑不用改
 model_path = './models/Fall_Detection/best.pt' # Fall 模型的路徑
 
-cap = cv2.VideoCapture(0)
+cap = cv2.VideoCapture('./public/video/Fall_2.mp4')
 
 # 降低畫素以加速模型運算 (if needed)
 # try 640*480 or 320*240
@@ -82,6 +82,11 @@ try:
         # send message once
         if fall_count == warning_threshold:  
             print('sending warning message')
+
+            # 抓取當前偵測事件的截圖
+            screenshot_path = './public/picture/fall_event/fire_screenshot.jpg'
+            cv2.imwrite(screenshot_path, frame)
+
             send_mail()
 
         _, buffer = cv2.imencode('.jpg', img)
