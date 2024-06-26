@@ -1,13 +1,13 @@
-import { Router } from 'express';
-const router = Router();
-import { spawn } from 'child_process';
+const express = require('express');
+const router = express.Router();
+const { spawn } = require('child_process');
 //導入 moment
-import moment from 'moment';
+const moment = require('moment');
 
 //宣告登入檢測的 middleware
-import checkLoginMiddleware from '../../middleware/checkLoginMiddleware';
-import MemberModel, { find, findByIdAndDelete } from '../../models/MemberModel';
-import treeKill from 'tree-kill';
+let checkLoginMiddleware = require('../../middleware/checkLoginMiddleware');
+const MemberModel = require('../../models/MemberModel');
+const treeKill = require('tree-kill');
 
 let faceRecognitionProcess = null;
 let fallDetectionProcess = null;
@@ -26,7 +26,7 @@ router.get('/homepage', checkLoginMiddleware, function(req, res, next) {
 router.get('/homepage/member', checkLoginMiddleware, async function(req, res, next) {
   try {
     // 從資料庫中讀取所有的帳單訊息，按時間降序排列
-    let members = await find().sort({ time: -1 }).exec();
+    let members = await MemberModel.find().sort({ time: -1 }).exec();
     res.render('member', { members: members, moment: moment });
   } catch (error) {
     res.status(500).send('讀取失敗！');
@@ -161,7 +161,7 @@ router.get('/homepage/member/:id', checkLoginMiddleware, async (req, res) => {
     let id = req.params.id;
 
     // 刪除記錄
-    await findByIdAndDelete(id);
+    await MemberModel.findByIdAndDelete(id);
 
     // 提醒
     res.render('success', { msg: '刪除成功', url: '/homepage/member' });
@@ -170,4 +170,4 @@ router.get('/homepage/member/:id', checkLoginMiddleware, async (req, res) => {
   }
 });
 
-export default router;
+module.exports = router;

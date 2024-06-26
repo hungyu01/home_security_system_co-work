@@ -1,67 +1,91 @@
 #!/usr/bin/env node
 
-import { isMaster, fork, on } from 'cluster';
-import { cpus } from 'os';
-import { app, server } from '../app';
-const debug = require('debug')('accounts:server');
+/**
+ * Module dependencies.
+ */
+const cluster = require('cluster');
+const os = require('os');
+var { app, server } = require('../app'); 
+var debug = require('debug')('accounts:server');
 
 // 導入 Mongoose configuration and handle the connection
-import connectDB from '../db/db';
+var connectDB = require('../db/db');
 
-const numCPUs = cpus().length;
+/**
+ * Get port from environment and store in Express.
+ */
 
-if (isMaster) {
-  console.log(`Master ${process.pid} is running`);
+var port = normalizePort(process.env.PORT || '4000');
+app.set('port', port);
 
-  // Fork workers.
-  for (let i = 0; i < numCPUs; i++) {
-    fork();
+/**
+ * Event listener for HTTP server "error" event.
+ */
+
+function onError(error) {
+  if (error.syscall !== 'listen') {
+    throw error;
   }
 
-  on('exit', (worker, code, signal) => {
-    console.log(`Worker ${worker.process.pid} died`);
-    fork(); // Restart the worker
-  });
-
-} else {
-  /**
-   * Get port from environment and store in Express.
-   */
-  const port = normalizePort(process.env.PORT || '4000');
-  app.set('port', port);
-
-  /**
-   * Event listener for HTTP server "error" event.
-   */
-  function onError(error) {
-    if (error.syscall !== 'listen') {
-      throw error;
-    }
-
-    const bind = typeof port === 'string'
+  var bind = typeof port === 'string'
       ? 'Pipe ' + port
       : 'Port ' + port;
-
+      
     // handle specific listen errors with friendly messages
     switch (error.code) {
       case 'EACCES':
-        console.error(bind + ' requires elevated privileges');
-        process.exit(1);
-        break;
+          console.error(bind + ' requires elevated privileges');
+          process.exit(1);
+          break;
       case 'EADDRINUSE':
-        console.error(bind + ' is already in use');
-        process.exit(1);
-        break;
+          console.error(bind + ' is already in use');
+          process.exit(1);
+          break;
       default:
-        throw error;
+          throw error;
+              }
+}
+
+/**
+ * Event listener for HTTP server "listening" event.
+ */
+
+function onListening() {
+    var addr = server.address();
+    var bind = typeof addr === 'string'
+        ? 'pipe ' + addr
+        : 'port ' + addr.port;
+    debug('Listening on ' + bind);
+    console.log('MongoDB connection successful');
+}
+
+/**
+ * Normalize a port into a number, string, or false.
+ */
+
+function normalizePort(val) {
+    var port = parseInt(val, 10);
     }
-  }
-  
-  /**
-   * Normalize a port into a number, string, or false.
-   */
-  function normalizePort(val) {
-    const port = parseInt(val, 10);
+
+/**
+ * Event listener for HTTP server "listening" event.
+ */
+
+function onListening() {
+    var addr = server.address();
+    var bind = typeof addr === 'string'
+        ? 'pipe ' + addr
+        : 'port ' + addr.port;
+    debug('Listening on ' + bind);
+    console.log('MongoDB connection successful');
+}
+
+/**
+ * Normalize a port into a number, string, or false.
+ */
+
+function normalizePort(val) {
+    var port = parseInt(val, 10);
 
     if (isNaN(port)) {
       // named pipe
@@ -69,41 +93,55 @@ if (isMaster) {
     }
 
     if (port >= 0) {
-      // port number
-      return port;
-    }
+        // port number
+        return port;
+      }
 
-    return false;
-  }
-  
-  /**
-   * Event listener for HTTP server "listening" event.
-   */
-  function onListening() {
-    const addr = server.address();
-    const bind = typeof addr === 'string'
-      ? 'pipe ' + addr
-      : 'port ' + addr.port;
-    debug('Listening on ' + bind);
-    console.log('MongoDB connection successful');
+      return false;
   }
 
+// 導入 DB 函數
+function onDBSuccess() {
+  server.listen(port);
+  server.on('error', onError);
+  server.on('listening', onListening);
+}
 
-  // 導入 DB 函數
-  function onDBSuccess() {
+// 回調函式當 DB connection 出現錯誤
+function onDBError(err) {
+  console.error('MongoDB connection error:', err);
+  process.exit(1);
+}
+
+/**
+ * Cluster setup
+ */
+
+if (cluster.isMaster) {
+  const numCPUs = os.cpus().length;
+  console.log(`Master ${process.pid} is running`);
+
+  // Fork workers
+  for (let i = 0; i < numCPUs; i++) {
+    cluster.fork();
+  }
+
+  cluster.on('exit', (worker, code, signal) => {
+    console.log(`Worker ${worker.process.pid} died`);
+    // Automatically restart workers
+    cluster.fork();
+  });
+} else {
+  // Workers can share any TCP connection
+  // In this case it is an HTTP server
+
+  // Connect to the database and start the server
+  connectDB(() => {
     server.listen(port);
     server.on('error', onError);
     server.on('listening', onListening);
-  }
-
-  // 回调函數 DB connection 出錯時
-  function onDBError(err) {
+  }, (err) => {
     console.error('MongoDB connection error:', err);
     process.exit(1);
-  }
-
-  // 連線到 DB
-  connectDB(onDBSuccess, onDBError);
-
-  console.log(`Worker ${process.pid} started`);
+  });
 }

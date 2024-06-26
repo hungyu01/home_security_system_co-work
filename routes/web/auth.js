@@ -1,9 +1,11 @@
-import { Router } from 'express';
-var router = Router();
+var express = require('express');
+var router = express.Router();
+const session = require('express-session');
+const MongoStore = require('connect-mongo');
 //導入 UserModel 模型
-import { create, findOne } from '../../models/UserModel';
+const UserModel = require('../../models/UserModel')
 //導入 md5 加密密碼
-import md5 from 'md5';
+const md5 = require('md5');
 
 //註冊頁面
 router.get('/reg', (req, res)=>{
@@ -18,7 +20,7 @@ router.post('/reg', async (req, res) => {
     
     // 創建使用者資料並儲存到資料庫
     try {
-        const data = await create({ ...req.body, password: hashedPassword });
+        const data = await UserModel.create({ ...req.body, password: hashedPassword });
         res.render('success', { msg: '註冊成功', url: '/login' });
     } catch (err) {
         console.error(err);
@@ -37,7 +39,7 @@ router.post('/login', async (req, res) => {
     // 取得用戶名跟密碼
     let { username, password } = req.body;
         // 查詢資料庫密碼
-        const user = await findOne({ username: username, password: md5(password) });
+        const user = await UserModel.findOne({ username: username, password: md5(password) });
         if (user) {
             req.session.username = user.username;
             req.session._id = user._id;
@@ -56,4 +58,4 @@ router.post('/logout', (req, res)=>{
 });
 
 
-export default router;
+module.exports = router;

@@ -1,56 +1,59 @@
-import express, { json, urlencoded, strict } from 'express';
-import { join } from 'path';
-import favicon from 'serve-favicon';
-import cookieParser from 'cookie-parser';
-import logger from 'morgan';
-import session from 'express-session';
-import { create } from 'connect-mongo';
-import { DBHOST, DBPORT, DBNAME } from './config/config';
-import indexRouter from './routes/web/index';
-import authRouter from './routes/web/auth';
-import authApiRouter from './routes/api/auth';
-import accountRouter from './routes/api/account';
-import { createServer } from 'http';
-import { Server } from 'socket.io';
+const express = require('express');
+const path = require('path');
+const favicon = require('serve-favicon')
+const cookieParser = require('cookie-parser');
+const logger = require('morgan');
+const session = require('express-session');
+const MongoStore = require('connect-mongo');
+const { DBHOST, DBPORT, DBNAME } = require('./config/config');
+const indexRouter = require('./routes/web/index');
+const authRouter = require('./routes/web/auth');
+const authApiRouter = require('./routes/api/auth');
+//導入 account api 路由文件
+const accountRouter = require('./routes/api/account');
+//導入 Socket.IO
+const http = require('http');
+const { Server } = require('socket.io');
 
 const app = express();
 
 // Session setup with MongoDB store
 app.use(session({
-  name: 'sid',
-  secret: 'aiml05_02',
-  store: create({
-    mongoUrl: `mongodb://${DBHOST}:${DBPORT}/${DBNAME}`,
-    ttl: 7 * 24 * 60 * 60, // session TTL (7 days)
+  name: 'sid', //設定 cookie 的 name，預設是: connect.sid
+  secret: 'aiml05_02', // 簽名
+  saveUninitialized: false, // 是否在每次請求時都設定一個 cookie 儲存 session id
+  resave: true, //在每次請求後重新保存 session
+  store: MongoStore.create({
+      mongoUrl: `mongodb://${DBHOST}:${DBPORT}/${DBNAME}` //資料庫的連接
   }),
-  resave: true,
-  saveUninitialized: false,
   cookie: {
-    httpOnly: true,
-    maxAge: 7 * 24 * 60 * 60 * 1000, // session cookie max age (7 days)
+      httpOnly: true, //開啟後前端不能透過 JS 操作
+      maxAge: 1000 * 60 * 60 * 24 * 7 //控制 session 過期的時間
   },
 }));
 
-// View engine setup
-app.set('views', join(__dirname, 'views'));
+// view engine setup
+app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'ejs');
 
 app.use(logger('dev'));
-app.use(json());
-app.use(urlencoded({ extended: false }));
+app.use(express.json());
+app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
-app.use(favicon(join(__dirname, 'public', 'picture', 'favicon.ico')));
-app.use('/public', strict(join(__dirname, 'public')));
+app.use(favicon(path.join(__dirname,'public/picture','favicon.ico')))
+app.use('/public',express.static(path.join(__dirname, 'public')));
 
-app.use('/', indexRouter);
-app.use('/', authRouter);
+app.use('/', indexRouter); // 首頁及功能
+app.use('/', authRouter); // 註冊頁面及功能
 app.use('/api', accountRouter);
 app.use('/api', authApiRouter);
 
-// HTTP server and Socket.IO setup
-const server = createServer(app);
-const io = new Server(server);
+// 創建 HTTP 伺服器
+const server = http.createServer(app);
 
+// 創建 Socket 伺服器
+const io = new Server(server);
+// Socket.IO 事件處理
 io.on('connection', (socket) => {
   console.log('Socket client connected');
 
@@ -60,34 +63,39 @@ io.on('connection', (socket) => {
 
   socket.on('disconnect', () => {
     console.log('Socket client disconnected');
-    io.emit('dis');
+    io.emit('dis')
   });
 });
 
+// 處理 stream 事件的通用函數
 function handleStreamEvent(eventType, data, socket) {
   try {
-    // Handle or broadcast data
-    socket.broadcast.emit(eventType, data);
+      // 處理數據或傳遞數據
+      socket.broadcast.emit(eventType, data);
   } catch (error) {
-    console.error(`Error handling ${eventType} event:`, error);
+      console.error(`Error handling ${eventType} event:`, error);
   } finally {
-    data = null;
+      // 顯式釋放變量
+      data = null;
   }
 }
 
-// Error handling
-app.use(function(req, res, next) {
-  const err = new Error('Not Found');
-  err.status = 404;
-  next(err);
+// catch 404 and forward to error handler
+app.use(function (req, res, next) {
+  //回應 404
+  res.render('404');
 });
 
-app.use(function(err, req, res, next) {
+// error handler
+app.use(function (err, req, res, next) {
+  // set locals, only providing error in development
   res.locals.message = err.message;
   res.locals.error = req.app.get('env') === 'development' ? err : {};
 
-  res.status(err.status || 500);
-  res.render('error');
+    // render the error page
+    res.status(err.status || 500);
+    res.render('error');
 });
 
-export default { app, server };
+// 導出 app 和 server
+module.exports = { app, server }; 

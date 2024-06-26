@@ -1,11 +1,11 @@
-import { Schema, model } from 'mongoose';
+const mongoose = require('mongoose');
 
 // 定義 schema
-const UserSchema = new Schema({
+const MemberSchema = new mongoose.Schema({
     username: String,
     password: String
 });
 // 創建模型對象，對文檔的操作對象
-const UserModel = model('users', UserSchema);
+const MemberModel = mongoose.model('member', MemberSchema);
 
-export default UserModel;
+module.exports = MemberModel;
