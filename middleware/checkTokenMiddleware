@@ -1,5 +1,5 @@
 // token 中間件
-module.exports = (req, res, next)=>{
+export default (req, res, next)=>{
     // 獲得 token
     let token = req.get('token');
     if (!token) {

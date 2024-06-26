@@ -1,19 +1,19 @@
-const express = require('express');
-const router = express.Router();
+import { Router } from 'express';
+const router = Router();
 // 導入 jwt
-const jwt = require('jsonwebtoken');
+import jwt from 'jsonwebtoken';
 
 //導入 moment
-const moment = require('moment');
-const MemberModel = require('../../models/MemberModel');
+import moment from 'moment';
+import MemberModel, { find, findByIdAndDelete, findById, findByIdAndUpdate } from '../../models/MemberModel';
 //導入中間件
-let checkTokenMiddleware = require('../../middleware/checkTokenMiddleware')
+import checkTokenMiddleware from '../../middleware/checkTokenMiddleware';
 // 記帳本
 router.get('/homepage/member', checkTokenMiddleware, async function(req, res, next) {
     try {
         // 從資料庫中讀取所有的帳單訊息，按時間降序排列
         try {
-          let member = await MemberModel.find().sort({ time: -1 }).exec();
+          let member = await find().sort({ time: -1 }).exec();
           res.json({
             code: '0000',
             msg: '讀取成功',
@@ -67,7 +67,7 @@ router.delete('/homepage/member/:id', checkTokenMiddleware, async (req, res) => 
       // 獲得 params 的 id 參數
       let id = req.params.id;
       // 刪除記錄
-      await MemberModel.findByIdAndDelete(id);
+      await findByIdAndDelete(id);
       // 提醒
       res.json({
         code: '0000',
@@ -89,7 +89,7 @@ router.get('/homepage/member/:id', checkTokenMiddleware, async function(req, res
         // 獲得 params 的 id 參數
         let id = req.params.id;
         // 查詢單筆記錄
-        let member = await MemberModel.findById(id);
+        let member = await findById(id);
         // 如果找到記錄，回傳該記錄；否則回傳錯誤訊息
         if (member) {
             res.json({
@@ -119,7 +119,7 @@ router.patch('/homepage/member/:id', checkTokenMiddleware, async function(req, r
         // 獲得 params 的 id 參數
         let id = req.params.id;
         // 更新記錄
-        let member = await MemberModel.findByIdAndUpdate(id, req.body, { new: true });
+        let member = await findByIdAndUpdate(id, req.body, { new: true });
         // 如果找到記錄，回傳該記錄；否則回傳錯誤訊息
         if(member){
             res.json({
@@ -143,4 +143,4 @@ router.patch('/homepage/member/:id', checkTokenMiddleware, async function(req, r
     }
 });
 
-module.exports = router;
+export default router;

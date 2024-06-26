@@ -1,7 +1,7 @@
-const mongoose = require('mongoose');
+import { Schema, model } from 'mongoose';
 
 // 定義 schema
-const MemberSchema = new mongoose.Schema({
+const MemberSchema = new Schema({
     guest:{type:String, required: true},
     time: Date,
     relation:{type: String, require: true},
@@ -9,6 +9,6 @@ const MemberSchema = new mongoose.Schema({
 });
 
 // 創建模型對象，對文檔的操作對象
-const MemberModel = mongoose.model('member', MemberSchema);
+const MemberModel = model('member', MemberSchema);
 
-module.exports = MemberModel;
+export default MemberModel;

@@ -1,11 +1,11 @@
-var express = require('express');
-var router = express.Router();
+import { Router } from 'express';
+var router = Router();
 // 導入 jwt
-const jwt = require('jsonwebtoken');
+import { sign } from 'jsonwebtoken';
 // 導入 UserModel 模型
-const UserModel = require('../../models/UserModel');
+import { findOne } from '../../models/UserModel';
 // 導入 md5 加密密碼
-const md5 = require('md5');
+import md5 from 'md5';
 
 // 登入的操作
 router.post('/login', async (req, res) => {
@@ -14,10 +14,10 @@ router.post('/login', async (req, res) => {
 
     try {
         // 查詢資料庫密碼
-        const user = await UserModel.findOne({ username: username, password: md5(password) });
+        const user = await findOne({ username: username, password: md5(password) });
         if (user) {
             // 創建 token
-            let token = jwt.sign({
+            let token = sign({
                 username: user.username,
                 _id: user._id
             }, 'password', {
@@ -57,4 +57,4 @@ router.post('/logout', (req, res) => {
     });
 });
 
-module.exports = router;
+export default router;

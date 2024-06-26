@@ -1,27 +1,26 @@
 #!/usr/bin/env node
 
-const cluster = require('cluster');
-const os = require('os');
-const { app, server } = require('../app');
+import { isMaster, fork, on } from 'cluster';
+import { cpus } from 'os';
+import { app, server } from '../app';
 const debug = require('debug')('accounts:server');
 
 // 導入 Mongoose configuration and handle the connection
-const mongoose = require('mongoose');
-const connectDB = require('../db/db');
+import connectDB from '../db/db';
 
-const numCPUs = os.cpus().length;
+const numCPUs = cpus().length;
 
-if (cluster.isMaster) {
+if (isMaster) {
   console.log(`Master ${process.pid} is running`);
 
   // Fork workers.
   for (let i = 0; i < numCPUs; i++) {
-    cluster.fork();
+    fork();
   }
 
-  cluster.on('exit', (worker, code, signal) => {
+  on('exit', (worker, code, signal) => {
     console.log(`Worker ${worker.process.pid} died`);
-    cluster.fork(); // Restart the worker
+    fork(); // Restart the worker
   });
 
 } else {
@@ -57,19 +56,7 @@ if (cluster.isMaster) {
         throw error;
     }
   }
-
-  /**
-   * Event listener for HTTP server "listening" event.
-   */
-  function onListening() {
-    const addr = server.address();
-    const bind = typeof addr === 'string'
-      ? 'pipe ' + addr
-      : 'port ' + addr.port;
-    debug('Listening on ' + bind);
-    console.log('MongoDB connection successful');
-  }
-
+  
   /**
    * Normalize a port into a number, string, or false.
    */
@@ -88,6 +75,19 @@ if (cluster.isMaster) {
 
     return false;
   }
+  
+  /**
+   * Event listener for HTTP server "listening" event.
+   */
+  function onListening() {
+    const addr = server.address();
+    const bind = typeof addr === 'string'
+      ? 'pipe ' + addr
+      : 'port ' + addr.port;
+    debug('Listening on ' + bind);
+    console.log('MongoDB connection successful');
+  }
+
 
   // 導入 DB 函數
   function onDBSuccess() {
