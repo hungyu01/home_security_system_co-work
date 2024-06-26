@@ -1,7 +1,6 @@
 var express = require('express');
 var router = express.Router();
 const session = require('express-session');
-const MongoStore = require('connect-mongo');
 //導入 UserModel 模型
 const UserModel = require('../../models/UserModel')
 //導入 md5 加密密碼

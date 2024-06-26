@@ -1,9 +1,8 @@
-import numpy as np
 import cv2
 from ultralytics import YOLO
 import socketio
 import base64
-import shutil
+import math
 import time
 import importlib.util
 
@@ -38,58 +37,57 @@ sio.on('disconnect', disconnect_handler)
 # 連接到伺服器
 sio.connect('http://192.168.24.51:4000')  # 記得確認 ip 和 port
 
+cap = cv2.VideoCapture('./public/video/Fall.mp4')
+if not cap.isOpened():
+    print("無法打開攝像頭")
+    exit()
 # 目前路徑
-runs_folder_path = './runs'                               # 輸出的資料夾路徑
-results_path = runs_folder_path + '/detect/predict/image0.jpg'                     # 這一行路徑不用改
-model_path = './models/Fall_Detection/best.pt' # Fall 模型的路徑
-
-cap = cv2.VideoCapture('./public/video/Fall_2.mp4')
-
-# 降低畫素以加速模型運算 (if needed)
-# try 640*480 or 320*240
-'''
-desired_width = 640
-desired_height = 480
-cap.set(cv2.CAP_PROP_FRAME_WIDTH, desired_width)
-cap.set(cv2.CAP_PROP_FRAME_HEIGHT, desired_height)
-#'''
-
 model = YOLO('./models/Fall_Detection/best.pt') # 要改model路徑
+
+# Reading the classes
+classnames = ['fallen', 'falling', 'standing']  # Update with all classes your model detects
 
 # send messages
 fall_count = 0
 warning_threshold = 10
 
+font = cv2.FONT_HERSHEY_SIMPLEX
+lt = 2
+
 try:
-    while cap.isOpened() and running: 
+    while running:
         ret, frame = cap.read()
-        if not ret or cv2.waitKey(30) == 27: break
+        if not ret:
+            print("影格捕獲失敗，跳過這個迴圈")
+            continue
 
-        results = model(source=frame, show=False, conf=0.4, save=True)
-        
-        img = cv2.imread('./runs/detect/predict/image0.jpg') # 讀取圖片路徑 ('predict'可能需要改)
-        
-        # Warning Alarm preparation
-        try:
-            for r in results:
-                if 1 in r.boxes.cls:   # falling
-                    fall_count += 1
-                elif 0 in r.boxes.cls: # fallen
-                    fall_count += 1
-        except RuntimeError: 
-            fall_count = 0             # clear
-        
-        # send message once
-        if fall_count == warning_threshold:  
-            print('sending warning message')
+        result = model(frame, stream=True)
 
-            # 抓取當前偵測事件的截圖
-            screenshot_path = './public/picture/fall_event/fire_screenshot.jpg'
-            cv2.imwrite(screenshot_path, frame)
+        # Getting bbox, confidence and class names information to work with
+        for info in result:
+            boxes = info.boxes
+            for box in boxes:
+                confidence = box.conf[0]
+                confidence = math.ceil(confidence * 100)
+                Class = int(box.cls[0])
+                if confidence > 0.4 and classnames[Class] in ['fallen', 'falling', 'standing']:
+                    x1, y1, x2, y2 = box.xyxy[0]
+                    x1, y1, x2, y2 = int(x1), int(y1), int(x2), int(y2)
+                    if classnames[Class] == 'fallen':
+                        color = (0, 0, 255)  # Red color for fallen
+                        fall_count += 1  # Increment fire_count when fire is detected
+                        
+                    elif classnames[Class] == 'falling':
+                        color = (255, 165, 0)  # Orange color for falling
+                        fall_count += 1  # Increment fire_count when fire is detected
+                    else:
+                        color = (0, 255, 0)  # Green color for standing
 
-            send_mail()
+                    cv2.rectangle(frame, (x1, y1), (x2, y2), color, 3)
+                    cv2.putText(frame, f'{classnames[Class]} {confidence}%', (x1 + 8, y1 + 25),
+                                font, 0.8, color, lt)
 
-        _, buffer = cv2.imencode('.jpg', img)
+        _, buffer = cv2.imencode('.jpg', frame)
         jpg_as_text = base64.b64encode(buffer).decode('utf-8')
 
         # 發送影像幀到伺服器
@@ -98,14 +96,19 @@ try:
         # 設置每一幀之間的延遲
         time.sleep(0.1)
 
-finally:
-    # 使用 shutil 的 rmtree 刪除輸出資料夾
-    try:
-        shutil.rmtree(runs_folder_path)
-        print(f"成功刪除資料夾 {runs_folder_path}")
-    except OSError as e: 
-        print(f"Error: {runs_folder_path} : {e.strerror}")
+        if fall_count == warning_threshold:
+            print("Fall detected in more than 10 frames! Triggering alarm.")
+            # Here you can add code to trigger an alarm (e.g., play a sound, send a notification)
 
+            # 抓取當前偵測事件的截圖
+            screenshot_path = './public/picture/fire_event/fire_screenshot.jpg'
+            cv2.imwrite(screenshot_path, frame)
+
+            # Here you can add code to trigger an alarm (e.g., play a sound, send a notification)
+            # fire_count = 0  # Reset fire_count after triggering the alarm
+            send_mail()
+
+finally:
     cap.release()
     cv2.destroyAllWindows()
     cv2.waitKey(1)

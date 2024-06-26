@@ -7,6 +7,7 @@
   },
   "dependencies": {
     "child_process": "^1.0.2",
+    "cluster": "^0.7.7",
     "connect-mongo": "^5.1.0",
     "cookie-parser": "~1.4.4",
     "debug": "~2.6.9",
@@ -23,9 +24,11 @@
     "morgan": "~1.9.1",
     "node-media-server": "^2.7.0",
     "nodemon": "^3.1.0",
+    "redis": "^4.6.14",
     "serve-favicon": "^2.5.0",
     "shortid": "^2.2.16",
     "socket.io": "^4.7.5",
+    "socket.io-redis": "^6.1.1",
     "socketio": "^1.0.0",
     "tree-kill": "^1.2.2",
     "ws": "^8.17.0"

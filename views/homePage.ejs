@@ -61,19 +61,6 @@
     </div>
 </body>
 <script>
-    // 獲得所有的 delBtn
-    let delBtns = document.querySelectorAll('.delBtn');
 
-    // 綁定事件
-    delBtns.forEach(item => {
-        item.addEventListener('click', function(e) {
-            if (confirm('確定刪除紀錄嗎？')) {
-                return true;
-            } else {
-                // 阻止預設的行為
-                e.preventDefault();
-            }
-        });
-    });
 </script>
 </html>
