@@ -3,6 +3,7 @@ const mongoose = require('mongoose');
 // 定義 schema
 const UserSchema = new mongoose.Schema({
     guest:{type:String, required: true},
+    phone:{type: String, require:true},
     time: Date,
     relation:{type: String, require: true},
     remarks:{type: String}

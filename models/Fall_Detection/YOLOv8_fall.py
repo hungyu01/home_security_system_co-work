@@ -35,7 +35,7 @@ def disconnect_handler():
 sio.on('disconnect', disconnect_handler)
 
 # 連接到伺服器
-sio.connect('http://192.168.88.100:4000')  # 記得確認 ip 和 port
+sio.connect('http://192.168.24.51:4000')  # 記得確認 ip 和 port
 
 cap = cv2.VideoCapture('./public/video/Fall.mp4')
 if not cap.isOpened():
@@ -101,7 +101,7 @@ try:
             # Here you can add code to trigger an alarm (e.g., play a sound, send a notification)
 
             # 抓取當前偵測事件的截圖
-            screenshot_path = './public/picture/fire_event/fire_screenshot.jpg'
+            screenshot_path = './public/picture/fall_event/fall_screenshot.jpg'
             cv2.imwrite(screenshot_path, frame)
 
             # Here you can add code to trigger an alarm (e.g., play a sound, send a notification)

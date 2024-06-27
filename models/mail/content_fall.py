@@ -13,7 +13,7 @@ def send_mail():
     content["from"] = "penweru920@gmail.com"  #寄件者
     content["to"] = "penweru920@gmail.com" #收件者
     content.attach(MIMEText(f'{current_time}\n偵測事件:有人跌倒'))  #郵件內容
-    content.attach(MIMEImage(Path('./public/picture/fall_event/fire_screenshot.jpg').read_bytes()))
+    content.attach(MIMEImage(Path('./public/picture/fall_event/fall_screenshot.jpg').read_bytes()))
 
 
     with smtplib.SMTP(host="smtp.gmail.com", port="587") as smtp:  # 設定SMTP伺服器

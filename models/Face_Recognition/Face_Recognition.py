@@ -33,8 +33,9 @@ if not cap.isOpened():
 
 # 建立姓名和 id 的對照表
 name = {
-    '4': 'SJ',
-    '2': 'Mark Ruffalo',
+    '1':'Chris Evans',
+    '2':'Scarlett Johansson',
+    '3':'Ming Tai'
 }
 
 while running:
