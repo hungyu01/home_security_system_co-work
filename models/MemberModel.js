@@ -1,7 +1,7 @@
 const mongoose = require('mongoose');
 
 // 定義 schema
-const UserSchema = new mongoose.Schema({
+const MemberSchema = new mongoose.Schema({
     guest:{type:String, required: true},
     phone:{type: String, require:true},
     time: Date,
@@ -10,6 +10,6 @@ const UserSchema = new mongoose.Schema({
 });
 
 // 創建模型對象，對文檔的操作對象
-const UserModel = mongoose.model('users', UserSchema);
+const MemberModel = mongoose.model('members', MemberSchema);
 
-module.exports = UserModel;
+module.exports = MemberModel;

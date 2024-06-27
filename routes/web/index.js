@@ -8,6 +8,7 @@ const moment = require('moment');
 let checkLoginMiddleware = require('../../middleware/checkLoginMiddleware');
 const MemberModel = require('../../models/MemberModel');
 const treeKill = require('tree-kill');
+const ChatModel = require('../../models/ChatModel')
 
 let faceRecognitionProcess = null;
 let fallDetectionProcess = null;
@@ -18,8 +19,47 @@ router.get('/', checkLoginMiddleware, function(req, res, next) {
   res.redirect('/homepage');
 });
 // 系統首頁
-router.get('/homepage', checkLoginMiddleware, function(req, res, next) {
-  res.render('homePage');
+router.get('/homepage', checkLoginMiddleware, async function(req, res, next) {
+  let chats  = await ChatModel.find().sort({ time: -1 }).exec();
+  res.render('homePage', { chats: chats, moment: moment });
+});
+
+// 新增留言頁面
+router.get('/homepage/chat', checkLoginMiddleware, function(req, res, next) {
+  res.render('chat');
+});
+
+// 顯示名單紀錄
+router.post("/homepage", checkLoginMiddleware, async (req, res) => {
+  try {
+    // 將日期轉成 Date 類型
+    let chat = new ChatModel({
+      ...req.body,
+      time: moment(req.body.time).toDate()
+    });
+    // 儲存到資料庫中
+    await chat.save();
+    // 成功後重定向
+    res.render('success', { msg: '新增成功', url: '/homepage' });
+  } catch (error) {
+    res.status(500).send('插入失敗');
+  }
+});
+
+//刪除留言紀錄
+router.get('/homepage/:id', checkLoginMiddleware, async (req, res) => {
+  try {
+    // 獲得 params 的 id 參數
+    let id = req.params.id;
+
+    // 刪除記錄
+    await ChatModel.findByIdAndDelete(id);
+
+    // 提醒
+    res.render('success', { msg: '刪除成功', url: '/homepage' });
+  } catch (error) {
+    res.status(500).send('刪除失敗');
+  }
 });
 
 //新增來賓名單頁面
@@ -137,7 +177,7 @@ router.post('/homepage/stopFireAlarm', (req, res) => {
   }
 });
 
-// 新增紀錄
+// 顯示名單紀錄
 router.post("/homepage/member", checkLoginMiddleware, async (req, res) => {
   try {
     // 將日期轉成 Date 類型
@@ -154,7 +194,7 @@ router.post("/homepage/member", checkLoginMiddleware, async (req, res) => {
   }
 });
 
-//刪除記帳紀錄
+//刪除名單紀錄
 router.get('/homepage/member/:id', checkLoginMiddleware, async (req, res) => {
   try {
     // 獲得 params 的 id 參數

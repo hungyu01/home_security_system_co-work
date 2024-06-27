@@ -56,6 +56,24 @@
                     <button class="btn btn-primary btn-block" onclick="location.href='/homepage/fireAlarm'">火災警報通知
                     </button>
                 </div>
+
+                <hr>
+                
+                <div class="col-xs-12 text-left" style="margin-top: 20px">
+                        <button class="btn btn-info" onclick="location.href='/homepage/chat'">留言</button>
+                            <% chats.forEach(item => { %>
+                            <div class="panel panel-default">
+                                <div class="panel-body">
+                                    <div class="col-xs-6" style="width: 250px;"><%= item.name %></div>
+                                    <div class="col-xs-3"><%= item.chat %></div>
+                                    <a class="delBtn" href="/homepage/<%= item._id %>">
+                                        <span class="glyphicon glyphicon-remove" aria-hidden="true"></span>
+                                    </a>
+                                </div>
+                            </div>
+                            <% }) %>
+                </div>
+                </div>
             </div>
         </div>
     </div>
