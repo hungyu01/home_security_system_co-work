@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>家庭智慧監控系統</title>
+    <title>嘟嘟可-家庭智慧監控系統</title>
     <link rel="stylesheet" href="https://cdn.bootcdn.net/ajax/libs/twitter-bootstrap/3.3.7/css/bootstrap.css">
     <style>
         label {
@@ -35,7 +35,7 @@
         <div class="row">
             <div class="col-xs-12 col-lg-8 col-lg-offset-2">
                 <div class="header-row" style="margin-top: 20px;">
-                    <h2>家庭智慧監控系統</h2>
+                    <h2>嘟嘟可-家庭智慧監控系統</h2>
                     <form action="/logout" method="post">
                         <button class="btn btn-danger">登出</button>
                     </form>
@@ -66,9 +66,6 @@
                                 <div class="panel-body">
                                     <div class="col-xs-6" style="width: 250px;"><%= item.name %></div>
                                     <div class="col-xs-3"><%= item.chat %></div>
-                                    <a class="delBtn" href="/homepage/<%= item._id %>">
-                                        <span class="glyphicon glyphicon-remove" aria-hidden="true"></span>
-                                    </a>
                                 </div>
                             </div>
                             <% }) %>
@@ -79,6 +76,5 @@
     </div>
 </body>
 <script>
-
 </script>
 </html>

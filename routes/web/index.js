@@ -46,21 +46,6 @@ router.post("/homepage", checkLoginMiddleware, async (req, res) => {
   }
 });
 
-//刪除留言紀錄
-router.get('/homepage/:id', checkLoginMiddleware, async (req, res) => {
-  try {
-    // 獲得 params 的 id 參數
-    let id = req.params.id;
-
-    // 刪除記錄
-    await ChatModel.findByIdAndDelete(id);
-
-    // 提醒
-    res.render('success', { msg: '刪除成功', url: '/homepage' });
-  } catch (error) {
-    res.status(500).send('刪除失敗');
-  }
-});
 
 //新增來賓名單頁面
 router.get('/homepage/member', checkLoginMiddleware, async function(req, res, next) {

@@ -4,7 +4,7 @@
     <meta charset="UTF-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>家庭智慧監控系統</title>
+    <title>嘟嘟可-家庭智慧監控系統</title>
     <link href="https://cdn.bootcdn.net/ajax/libs/twitter-bootstrap/3.3.7/css/bootstrap.css" rel="stylesheet" />
     <link rel="stylesheet" href="/public/css/bootstrap.css"/>
     <link rel="stylesheet" href="/public/css/bootstrap-datepicker.css"/>
@@ -14,9 +14,12 @@
 <body>
     <div class="container" style="margin-top: 65px;">
         <div class="row">
+            <div class="header-row" style="margin-top: 20px;">
+                <h2>嘟嘟可-家庭智慧監控系統</h2>
+            </div>
+            <hr>
             <div class="col-xs-12 col-md-8 col-md-offset-2 col-lg-4 col-lg-offset-4">
                 <h2>登入</h2>
-                <hr>
                     <form method="post" action="/login">
                         <div class="form-group">
                             <label for="item">用戶名</label>
@@ -26,10 +29,10 @@
                             <label for="time">密碼</label>
                             <input name="password" type="password" class="form-control" id="time" />
                         </div>
-                        <span style="text-align: right; display: block;">
+                        <div style="text-align: right; display: block;">
                             <button type="submit" class="btn btn-primary" style="width: 100px;">送出</button>
-                            <button class="btn btn-warning" onclick="location.href='/reg'" >註冊</button>
-                        </span>
+                            <button type="button" class="btn btn-warning" onclick="window.location.href='/reg'">註冊</button>
+                        </div>
                 </form>
             </div>
         </div>

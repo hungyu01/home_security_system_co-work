@@ -5,6 +5,12 @@ import base64
 import math
 import time
 import importlib.util
+from pymongo import MongoClient
+
+# MongoDB 連接設置
+client = MongoClient('mongodb://localhost:27017/')  # 根據需要調整連接參數
+db = client['housekeeper']  # 選擇數據庫
+collection = db['events']  # 選擇集合
 
 #from mail.content_fall import send_mail
 # Construct the full path to module2.py
@@ -107,6 +113,14 @@ try:
             # Here you can add code to trigger an alarm (e.g., play a sound, send a notification)
             # fire_count = 0  # Reset fire_count after triggering the alarm
             send_mail()
+
+            # 紀錄事件到 MongoDB
+            event = {
+                'timestamp': time.strftime('%Y-%m-%d %H:%M:%S'),
+                'event_type': '動作偵測',
+                'details': '偵測到跌倒動作，請開啟監控系統確認'
+            }
+            collection.insert_one(event)
 
 finally:
     cap.release()

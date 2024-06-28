@@ -2,12 +2,22 @@ import cv2
 import socketio
 import base64
 import time  # 新增導入time模組
+from pymongo import MongoClient
+
+# MongoDB 連接設置
+client = MongoClient('mongodb://localhost:27017/')  # 根據需要調整連接參數
+db = client['housekeeper']  # 選擇數據庫
+collection = db['events']  # 選擇集合
 
 recognizer = cv2.face.LBPHFaceRecognizer_create()         # 啟用訓練人臉模型方法
 recognizer.read('./models/Face_Recognition/face.yml')     # 讀取人臉模型檔
 cascade_path = "./models/Face_Recognition/xml/haarcascade_frontalface_default.xml"  # 載入人臉追蹤模型
 face_cascade = cv2.CascadeClassifier(cascade_path)        # 啟用人臉追蹤
 cap = cv2.VideoCapture(0)                                 # 開啟攝影機
+
+# 告警觸發條件次數
+stranger_threshold = 100
+stranger_count = 0
 
 # 初始化 Socket.IO 連接
 sio = socketio.Client()
@@ -55,8 +65,10 @@ while running:
             text = name.get(str(idnum), '???')                               # 如果信心指數小於 60，取得對應的名字
         else:
             text = '???'                                                     # 不然名字就是 ???
+            stranger_count += 1
         # 在人臉外框旁加上名字
         cv2.putText(img, text, (x, y - 5), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 255, 0), 2, cv2.LINE_AA)
+
 
     # 將影像幀轉換成 base64 字符串
     _, buffer = cv2.imencode('.jpg', img)
@@ -67,6 +79,16 @@ while running:
 
     # 加入延遲，降低處理幀率
     time.sleep(0.1)
+
+    if stranger_count == stranger_threshold:
+        print("STRANGER WARNING") #提示警告
+        # 紀錄事件到 MongoDB
+        event = {
+            'timestamp': time.strftime('%Y-%m-%d %H:%M:%S'),
+            'event_type': '動作偵測',
+            'details': '偵測到跌倒動作，請開啟監控系統確認'
+        }
+        collection.insert_one(event)
 
 cap.release()
 cv2.destroyAllWindows()
