@@ -3,13 +3,55 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>嘟嘟可-家庭智慧監控系統
-    </title>
-<link rel="stylesheet" href="/css/bootstrap.css"/>
-<link rel="stylesheet" href="/css/bootstrap-datepicker.css"/>
-<link rel="stylesheet" href="https://cdn.bootcdn.net/ajax/libs/twitter-bootstrap/3.3.7/css/bootstrap.css">
+    <title>嘟嘟可-家庭智慧監控系統</title>
+    <link rel="stylesheet" href="/css/bootstrap.css"/>
+    <link rel="stylesheet" href="/css/bootstrap-datepicker.css"/>
+    <link rel="stylesheet" href="https://cdn.bootcdn.net/ajax/libs/twitter-bootstrap/3.3.7/css/bootstrap.css">
+    <style>
+        body {
+            margin: 0;
+            padding-top: 100px; /* 調整此值以匹配header的高度 */
+        }
+        .header-row {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 1000;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 30px 40px;
+            background-color: #3f83db;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+        .header-row h2 {
+            margin: 0;
+            color: #ffffff; 
+            font-weight: 500; 
+            font-size: 36px; 
+        }
+        .btn-group {
+            display: flex;
+            gap: 10px;
+        }
+    </style>
 </head>
 <body>
+    <div class="header-row">
+        <h2>嘟嘟可-家庭智慧監控系統</h2>
+        <div class="btn-group">
+            <button class="btn btn-primary">
+                <a href="/homepage/member" style="color: white; text-decoration: none;">返回來賓名單</a>
+            </button>
+            <button class="btn btn-primary">
+                <a href="/homepage" style="color: white; text-decoration: none;">回首頁</a>
+            </button>
+            <form action="/logout" method="post" style="display: inline;">
+                <button class="btn btn-danger">登出</button>
+            </form>
+        </div>
+    </div>
     <div class="container">
         <div class="row">
             <div class="col-xs-12 col-lg-8 col-lg-offset-2">

@@ -1,14 +1,17 @@
 const express = require('express');
 const router = express.Router();
 const { spawn } = require('child_process');
+const treeKill = require('tree-kill');
 //導入 moment
 const moment = require('moment');
 
 //宣告登入檢測的 middleware
 let checkLoginMiddleware = require('../../middleware/checkLoginMiddleware');
+
 const MemberModel = require('../../models/MemberModel');
-const treeKill = require('tree-kill');
 const ChatModel = require('../../models/ChatModel')
+const EventsModel = require('../../models/EventsModel')
+
 
 let faceRecognitionProcess = null;
 let fallDetectionProcess = null;
@@ -20,8 +23,9 @@ router.get('/', checkLoginMiddleware, function(req, res, next) {
 });
 // 系統首頁
 router.get('/homepage', checkLoginMiddleware, async function(req, res, next) {
-  let chats  = await ChatModel.find().sort({ time: -1 }).exec();
-  res.render('homePage', { chats: chats, moment: moment });
+  let chats  = await ChatModel.find().sort({ time: -1 }).limit(5).exec();
+  let events  = await EventsModel.find().sort({ time: -1 }).limit(5).exec();
+  res.render('homePage', { chats: chats, moment: moment, events: events });
 });
 
 // 新增留言頁面

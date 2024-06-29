@@ -42,7 +42,7 @@ def disconnect_handler():
 sio.on('disconnect', disconnect_handler)
 
 # 連接到伺服器
-sio.connect('http://192.168.24.51:4000')  # 確認 IP 和 port
+sio.connect('http://127.0.0.1:4000')  # 確認 IP 和 port
 
 # 啟動攝像頭
 cap = cv2.VideoCapture('./public/video/Fire_0.mp4')

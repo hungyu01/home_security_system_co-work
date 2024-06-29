@@ -6,6 +6,10 @@
     <title>嘟嘟可-家庭智慧監控系統</title>
     <link rel="stylesheet" href="https://cdn.bootcdn.net/ajax/libs/twitter-bootstrap/3.3.7/css/bootstrap.css">
     <style>
+        body {
+            margin: 0;
+            padding-top: 100px; /* 調整此值以匹配header的高度 */
+        }
         label {
             font-weight: normal;
         }
@@ -15,29 +19,70 @@
         .panel-body:hover .glyphicon-remove {
             display: inline-block;
         }
+        .header-row {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 1000;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            padding: 30px 40px;
+            background-color: #3f83db;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+        .header-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .header-row h2 {
+            margin: 0;
+            color: #ffffff; 
+            font-weight: 500; 
+            font-size: 36px; 
+        }
+        .row {
+            margin-top: 50px;
+        }
+        .content-container {
+            display: flex;
+            margin-top: 20px;
+        }
+        .content-section {
+            flex: 1;
+            margin: 0 10px;
+            border: 3px solid #cdc3c3;
+            border-radius: 5px;
+            padding: 15px;
+        }
+        .btn-group {
+            display: flex;
+            gap: 10px;
+        }
     </style>
 </head>
 <body>
+    <div class="header-row">
+        <div class="header-content">
+            <h2>嘟嘟可-家庭智慧監控系統</h2>
+            <div class="btn-group">
+                <button class="btn btn-primary">
+                    <a href="/homepage/member/create" style="color: white; text-decoration: none;">新增來賓名單</a>
+                </button>
+                <button class="btn btn-primary">
+                    <a href="/homepage" style="color: white; text-decoration: none;">回首頁</a>
+                </button>
+                <form action="/logout" method="post" style="display: inline;">
+                    <button class="btn btn-danger">登出</button>
+                </form>
+            </div>
+        </div>
+    </div>
     <div class="container">
         <div class="row">
             <div class="col-xs-12 col-lg-8 col-lg-offset-2">
-                <h2>嘟嘟可-家庭智慧監控系統</h2>
-                <div class="row text-right">
-                    <div class="col-xs-6 text-left">
-                        <button class="btn btn-primary">
-                            <a href="/homepage/member/create" style="color: white; text-decoration: none;">新增來賓名單</a>
-                        </button>
-                        <button class="btn btn-primary">
-                            <a href="/homepage" style="color: white; text-decoration: none;">回首頁</a>
-                        </button>
-                    </div>
-                    <div class="col-xs-6 text-right">
-                        <form action="/logout" method="post">
-                            <button class="btn btn-danger">登出</button>
-                        </form>
-                    </div>
-                </div>
-                <hr>
                 <div class="members">
                     <% members.forEach(item => { %>
                     <div class="panel panel-default">
