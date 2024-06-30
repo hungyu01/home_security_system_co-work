@@ -37,12 +37,15 @@ router.get('/homepage/chat', checkLoginMiddleware, function(req, res, next) {
 router.post("/homepage", checkLoginMiddleware, async (req, res) => {
   try {
     // 將日期轉成 Date 類型
-    let chat = new ChatModel({
+    const chat = new ChatModel({
       ...req.body,
       time: moment(req.body.time).toDate()
     });
     // 儲存到資料庫中
     await chat.save();
+    // 接收樹梅派溫濕度控制
+    const data = req.body;
+    io.emit('sensor', data);  // Emit data to all connected clients
     // 成功後重定向
     res.render('success', { msg: '新增成功', url: '/homepage' });
   } catch (error) {

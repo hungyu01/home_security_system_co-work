@@ -14,26 +14,43 @@
             font-weight: normal;
         }
         .header-row {
-        position: fixed;
-        top: 0;
-        left: 0;
-        right: 0;
-        z-index: 1000;
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        padding: 30px 40px;
-        background-color: #3f83db;
-        box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 1000;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 30px 40px;
+            background-color: #932516;
+            box-shadow: 0 2px 5px #000000;
         }
         .row {
             margin-top: 50px;
         }
         .header-row h2 {
             margin: 0;
-            color: #ffffff; 
+            color: #e8d2c3; 
             font-weight: 500; 
             font-size: 36px; 
+        }
+        .btn-pri{
+            color: #ebccad;
+            background-color: #932516;
+        }
+        .btn-pri:hover {
+            color: #d5af89;
+            background-color: #761306;
+            border-color: #4d3737;
+        }
+        .btn-info {
+            background-color: #957c89;
+            border: 1px solid #9f5886;
+        }
+        .btn-info:hover {
+            background-color: #705165;
+            border: 1px solid #873e6d;
         }
         .btn-rectangle {
             width: 150px;
@@ -46,7 +63,7 @@
             align-items: center;
             justify-content: space-between;
             padding: 10px;
-            border: 3px solid #3089fd;
+            border: 3px solid #4d3737;
         }
         .btn-rectangle img {
             width: 80px;
@@ -58,6 +75,7 @@
         .btn-rectangle hr {
             width: 100%;
             margin: 5px 0;
+            color: #ebccad;
         }
         .button-container {
             display: flex;
@@ -71,15 +89,17 @@
         .content-section {
             flex: 1;
             margin: 0 10px;
-            border: 3px solid #cdc3c3;
+            border: 5px solid #b87f60;
             border-radius: 5px;
             padding: 15px;
+            background-color: #ebccad;
         }
     </style>
 </head>
-<body>
+<body style="background-color: #e8d2c3">
     <div class="header-row" >
         <h2>嘟嘟可-家庭智慧監控系統</h2>
+        <div id="data" style="color: #ffffff;"></div>
         <form action="/logout" method="post">
             <button class="btn btn-danger">登出</button>
         </form>
@@ -87,24 +107,24 @@
     <div class="row">
         <div class="col-xs-12 col-lg-8 col-lg-offset-2">
             <div class="button-container">
-                <button class="btn btn-primary btn-rectangle" onclick="location.href='/homepage/member'">
+                <button class="btn btn-pri btn-rectangle" onclick="location.href='/homepage/member'">
                     <img src="/public/picture/member.png" alt="成員圖示">
-                    <hr>
+                    <hr style="border-color: #ebccad;">
                     家庭成員與來賓
                 </button>
-                <button class="btn btn-primary btn-rectangle" onclick="location.href='/homepage/faceRecognition'">
+                <button class="btn btn-pri btn-rectangle" onclick="location.href='/homepage/faceRecognition'">
                     <img src="/public/picture/face.png" alt="人臉辨識圖示">
-                    <hr>
+                    <hr style="border-color: #ebccad;">
                     人臉辨識系統
                 </button>
-                <button class="btn btn-primary btn-rectangle" onclick="location.href='/homepage/fallDetection'">
+                <button class="btn btn-pri btn-rectangle" onclick="location.href='/homepage/fallDetection'">
                     <img src="/public/picture/fall.png" alt="跌倒偵測圖示">
-                    <hr>
+                    <hr style="border-color: #ebccad;">
                     跌倒偵測系統
                 </button>
-                <button class="btn btn-primary btn-rectangle" onclick="location.href='/homepage/fireAlarm'">
+                <button class="btn btn-pri btn-rectangle" onclick="location.href='/homepage/fireAlarm'">
                     <img src="/public/picture/fire.png" alt="火災警報圖示">
-                    <hr>
+                    <hr style="border-color: #ebccad;">
                     火災警報通知
                 </button>
             </div>
@@ -125,7 +145,7 @@
                     <h4>事件紀錄</h4>
                     <% events.forEach(item => { %>
                     <div class="panel panel-default">
-                        <div class="panel-heading" style="background-color: rgb(249, 142, 142);">新增日期：<%= moment(item.timestamp).format('YYYY-MM-DD') %></div>
+                        <div class="panel-heading" style="background-color: rgb(200, 68, 68); color: #ffffff;">新增日期：<%= moment(item.timestamp).format('YYYY-MM-DD') %></div>
                         <div class="panel-body">
                             <div class="col-xs-6" style="width: 100px;"><%= item.event_type %></div>
                             <div class="col-xs-3 text-left" style="width: 70%;"><%= item.details %></div>
@@ -137,4 +157,18 @@
         </div>
     </div>
 </body>
+<script src="/socket.io/socket.io.js"></script>
+<script>
+    var socket = io();
+
+    socket.on('sensor', function(data) {
+        var dataDiv = document.getElementById('data');
+        dataDiv.innerHTML = `
+            <p>Time: ${data.time}</p>
+            <p>Temperature (C): ${data.temperature_c}</p>
+            <p>Temperature (F): ${data.temperature_f}</p>
+            <p>Humidity: ${data.humidity}</p>
+        `;
+    });
+</script>
 </html>

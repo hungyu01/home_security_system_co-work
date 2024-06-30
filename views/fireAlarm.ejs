@@ -7,7 +7,8 @@
   <style>
     body {
       margin: 0;
-      padding-top: 100px; /* 調整此值以匹配header的高度 */
+      padding-top: 100px;
+      background-color: #e8d2c3
     }
     .header-row {
       position: fixed;
@@ -19,18 +20,28 @@
       justify-content: space-between;
       align-items: center;
       padding: 30px 40px;
-      background-color: #3f83db;
-      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+      background-color: #932516;
+      box-shadow: 0 2px 5px #000000;
     }
     .header-row h2 {
       margin: 0;
-      color: #ffffff; 
+      color: #e8d2c3; 
       font-weight: 500; 
       font-size: 36px; 
     }
     .btn-group {
       display: flex;
       gap: 10px;
+    }
+    .btn-pri{
+        color: #ebccad;
+        background-color: #957c89;
+        border-color: #9f5886;
+    }
+    .btn-pri:hover {
+        color: #d5af89;
+        background-color: #705165;
+        border-color: #5d1845;
     }
     #video-container {
       display: flex;
@@ -55,7 +66,7 @@
     <div class="header-row">
       <h2>嘟嘟可-家庭智慧監控系統</h2>
       <div class="btn-group">
-        <button class="btn btn-primary">
+        <button class="btn btn-pri">
           <a href="/homepage" style="color: white; text-decoration: none;">回首頁</a>
         </button>
         <form action="/logout" method="post" style="display: inline;">
