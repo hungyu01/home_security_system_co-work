@@ -157,18 +157,4 @@
         </div>
     </div>
 </body>
-<script src="/socket.io/socket.io.js"></script>
-<script>
-    var socket = io();
-
-    socket.on('sensor', function(data) {
-        var dataDiv = document.getElementById('data');
-        dataDiv.innerHTML = `
-            <p>Time: ${data.time}</p>
-            <p>Temperature (C): ${data.temperature_c}</p>
-            <p>Temperature (F): ${data.temperature_f}</p>
-            <p>Humidity: ${data.humidity}</p>
-        `;
-    });
-</script>
 </html>

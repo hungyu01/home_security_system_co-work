@@ -60,7 +60,6 @@ io.on('connection', (socket) => {
   socket.on('streamFace', (data) => handleStreamEvent('streamFace', data, socket));
   socket.on('streamFall', (data) => handleStreamEvent('streamFall', data, socket));
   socket.on('streamFire', (data) => handleStreamEvent('streamFire', data, socket));
-  socket.on('sensor', (data) => handleStreamEvent('sensor', data, socket));
 
   socket.on('disconnect', () => {
     console.log('Socket client disconnected');

@@ -9,11 +9,41 @@
     <link href="https://cdn.bootcdn.net/ajax/libs/twitter-bootstrap/3.3.7/css/bootstrap.css" rel="stylesheet" />
     <style>
         body {
-            background-color: #ffffff;
+            background-color: #e8d2c3;
             color: #000000;
-            background-color: #e8d2c3
+        }
+
+        .form-group .hint {
+            display: none;
+            color: #ff5555;
+            font-size: 14px;
+            font-weight: bold;
+        }
+
+        .form-group input:focus + .hint {
+            display: block;
         }
     </style>
+    <script>
+        function validateForm() {
+            var username = document.getElementById("username").value;
+            var password = document.getElementById("password").value;
+            var usernamePattern = /^.{1,20}$/;  // Username max 20 characters
+            var passwordPattern = /^(?=.*[a-zA-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{1,20}$/;  // Password with letters, numbers, special characters
+
+            if (!usernamePattern.test(username)) {
+                alert("帳號不得超過 20 個英數");
+                return false;
+            }
+
+            if (!passwordPattern.test(password)) {
+                alert("密碼不得超過 20 個字符，必須包含數字、英文、特殊符號");
+                return false;
+            }
+
+            return true;
+        }
+    </script>
 </head>
 
 <body>
@@ -22,14 +52,16 @@
             <div class="col-xs-12 col-md-8 col-md-offset-2 col-lg-4 col-lg-offset-4">
                 <h2>註冊</h2>
                 <hr />
-                <form method="post" action="/reg">
+                <form method="post" action="/reg" onsubmit="return validateForm()">
                     <div class="form-group">
-                        <label for="item">Username</label>
-                        <input name="username" type="text" class="form-control" id="item" />
+                        <label for="username">Username</label>
+                        <input name="username" type="text" class="form-control" id="username" placeholder="請輸入帳號" />
+                        <div class="hint">帳號不得超過 20 個英數</div>
                     </div>
                     <div class="form-group">
-                        <label for="time">Password</label>
-                        <input name="password" type="password" class="form-control" id="time" />
+                        <label for="password">Password</label>
+                        <input name="password" type="password" class="form-control" id="password" placeholder="請輸入密碼" />
+                        <div class="hint">密碼不得超過 20 個字符，必須包含數字、英文、特殊符號</div>
                     </div>
                     <hr>
                     <div class="sp" style="margin-left: 119px;">
