@@ -23,15 +23,20 @@ A home security website featuring face recognition, fall detection, and fire det
 
 * Face Recognition 人臉辨識
   - 以 OpenCV 訓練的人臉辨識模型
+  - Face recognition trained with YOLOv8
 * Fall Detection 跌倒偵測
   - 以 YOLOv8 訓練的跌倒偵測模型
+  - Fall detection trained with YOLOv8
 * Fire Detection 火焰偵測
   - 以 YOLOv8 訓練的火焰偵測模型
-* Gmail SMTP Alert Gmail 告警系統
+  - Fire detection trained with YOLOv8
+* Gmail SMTP Alert 告警 Gmail 系統
 * Message Board 留言板
   - 基於 MongoDB 的留言板功能
+  - Message board functionality based on MongoDB.
 * Directory 通訊錄
   - 基於 MongoDB 的通訊錄功能
+  - Directory functionality based on MongoDB.
 * Cross platform 跨平台
   - Windows, macOS and Linux ready.
   - 在 Windows, macOS and Linux 皆可使用
