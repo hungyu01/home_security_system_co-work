@@ -19,8 +19,6 @@ A home security website featuring face recognition, fall detection, and fire det
   <a href="#license">License</a>
 </p>
 
-![screenshot](https://raw.githubusercontent.com/amitmerchant1990/electron-markdownify/master/app/img/markdownify.gif)
-
 ## Key Features
 
 * Face Recognition 人臉辨識
