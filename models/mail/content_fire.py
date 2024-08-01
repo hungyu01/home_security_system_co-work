@@ -10,8 +10,8 @@ current_time = datetime.now()
 def send_mail():
     content = MIMEMultipart()  #建立MIMEMultipart物件
     content["subject"] = "火災告警"  #郵件標題
-    content["from"] = "penweru920@gmail.com"  #寄件者
-    content["to"] = "penweru920@gmail.com" #收件者
+    content["from"] = "******@gmail.com"  #寄件者
+    content["to"] = "******@gmail.com" #收件者
     content.attach(MIMEText(f'{current_time}\n偵測事件:發生火災'))  #郵件內容
     content.attach(MIMEImage(Path('./public/picture/fire_event/fire_screenshot.jpg').read_bytes()))
 
@@ -19,7 +19,7 @@ def send_mail():
         try:
             smtp.ehlo()  # 驗證SMTP伺服器
             smtp.starttls()  # 建立加密傳輸
-            smtp.login("penweru920@gmail.com", "tsuz keln rnxg cfel")  # 登入寄件者gmail
+            smtp.login("******@gmail.com", "password")  # 登入寄件者gmail
             smtp.send_message(content)  # 寄送郵件
             print("Complete!")
         except Exception as e:
