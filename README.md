@@ -57,10 +57,12 @@ $ npm start
 ## Download
 
 You can [download](https://github.com/hungyu01/home_security_system_co-work) the latest installable version of home security system for Windows, macOS and Linux.
+你可以 [下載](https://github.com/hungyu01/home_security_system_co-work) 智慧居家監控系統的最新版本在 Windows, macOS and Linux 上面
 
 ## Credits
 
 This software uses the following open source packages:
+此軟體使用以下開源軟體包：
 
 - [Python@3.9.19](https://www.python.org/downloads/)
 - [Node.js@21.7.3](https://nodejs.org/)
