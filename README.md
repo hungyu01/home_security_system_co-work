@@ -8,7 +8,7 @@
 <h4 align="center">具有人臉辨識、跌倒偵測、火焰偵測系統的居家監控系統的網站，且包含了 Gmail 的告警功能與留言板功能
 <br>
 A home security website featuring face recognition, fall detection, and fire detection systems, including Gmail alert and a message board.  
-<img src="https://github.com/hungyu01/home_security_system_co-work/blob/main/public/example.png" alt="Home_Security_System" width: 400px>
+<img src="https://github.com/hungyu01/home_security_system_co-work/blob/main/public/example.png" alt="Home_Security_System" width: 200px>
 </h4>
 
 <p align="center">
